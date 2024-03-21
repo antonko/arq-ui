@@ -5,7 +5,7 @@ services:
     restart: always
     ports:
       - '6379:6379'
-    command: redis-server --requirepass howtolovelife
+    # command: redis-server --requirepass howtolovelife
   redis-ui:
     image: patrikx3/p3x-redis-ui:latest
     ports:
@@ -16,6 +16,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
+    ports:
+      - '8000:8000'
     volumes:
       - ./backend:/app
     depends_on:
