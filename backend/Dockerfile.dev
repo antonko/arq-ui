@@ -1,0 +1,12 @@
+# This dockerfile is used to build the development image for the backend
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN pip install pdm
+
+RUN pdm install -g -v
+
+WORKDIR /app/src
+
+ENTRYPOINT ["pdm", "run", "uvicorn", "main:app", "--reload", "--host=0.0.0.0"]

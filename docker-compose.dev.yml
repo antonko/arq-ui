@@ -1,0 +1,24 @@
+version: '3'
+services:
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --requirepass howtolovelife
+  redis-ui:
+    image: patrikx3/p3x-redis-ui:latest
+    ports:
+        - 7843:7843
+    volumes:
+        - p3x-redis:/settings
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - redis
+volumes:
+  p3x-redis:
