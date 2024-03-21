@@ -1,0 +1,53 @@
+[project]
+name = "arq-ui-backend"
+version = "0.1.0"
+description = "Backend for ARQ UI"
+authors = [
+    {name = "Anton Kovalev", email = "antonko@gmail.com"},
+]
+dependencies = [
+    "arq>=0.25.0",
+    "pydantic>=2.6.4",
+    "uvicorn[standart]>=0.29.0",
+    "fastapi>=0.110.0",
+    "pydantic-settings>=2.2.1",
+]
+requires-python = "==3.11.*"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+
+
+[tool.pdm]
+distribution = false
+
+[tool.ruff]
+line-length = 99
+indent-width = 4
+target-version = "py311"
+extend-exclude = ["app/tests"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["D100", "D107", "ANN101", "TRY002", "TRY003", "EM101", "G004", "RUF", "D104", "D203", "D213", "PGH003", "PLR0913", "EM102", "INP001", "D401", "FIX002"]
+fixable = ["ALL"]
+unfixable = ["B"]
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"**/{tests,docs,tools}/*" = ["E402", "F811", "ARG001", "D103", "S101", "PLR2004", "F401", "PLR0913"]
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+
+[tool.ruff.lint.flake8-builtins]
+builtins-ignorelist = ["id","type"]
+
+[tool.mypy]
+python_version = "3.11"
+plugins = "pydantic.mypy"
+strict = false
+exclude = ["app/tests"]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
