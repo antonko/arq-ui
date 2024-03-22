@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     redis_ssl_cert_reqs: str = "none"
     redis_db: int = 0
 
+    max_jobs: int = 50000
+
     model_config = SettingsConfigDict(env_file=os.getenv("ENV_FILE", ".env"))
 
 
