@@ -134,8 +134,8 @@ class Statistics(BaseModel):
     )
 
 
-class PagedJobs(Paged[Job]):
-    """Represents a paged response containing a list of jobs."""
+class JobsInfo(BaseModel):
+    """Represents information about jobs."""
 
     functions: list[str] = Field(
         default=[],
@@ -146,6 +146,11 @@ class PagedJobs(Paged[Job]):
     statistics: Statistics = Field(
         default_factory=Statistics,
         description="Statistics for jobs",
+    )
+
+    paged_jobs: Paged[Job] | None = Field(
+        default_factory=None,
+        description="Paged response containing a list of jobs",
     )
 
 

@@ -1,3 +1,5 @@
+import logging
+
 from core.config import Settings, get_app_settings
 from core.exception_handler import (
     all_exception_handler,
@@ -8,7 +10,10 @@ from core.exception_handler import (
 from endpoints.api import routers
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException, RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
+
+logger = logging.getLogger(__name__)
 
 
 def get_application() -> FastAPI:
@@ -25,6 +30,15 @@ def get_application() -> FastAPI:
         openapi_url=settings.openapi_url,
         summary=settings.summary,
     )
+
+    if settings.cors_allowed_hosts:
+        application.add_middleware(
+            CORSMiddleware,
+            allow_origins=settings.cors_allowed_hosts,
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
     application.include_router(routers, prefix=settings.api_prefix)
 

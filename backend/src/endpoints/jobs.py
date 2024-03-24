@@ -5,7 +5,8 @@ from zoneinfo import ZoneInfo
 from core.config import Settings, get_app_settings
 from core.depends import get_lru_cache, get_redis_settings
 from fastapi import APIRouter, Query
-from schemas.job import JobSortBy, JobSortOrder, JobStatus, PagedJobs, Statistics
+from schemas.job import Job, JobsInfo, JobSortBy, JobSortOrder, JobStatus, Statistics
+from schemas.paged import Paged
 from schemas.problem import ProblemDetail
 from services.job_service import JobService
 
@@ -17,10 +18,10 @@ settings: Settings = get_app_settings()
 @router.get(
     "",
     summary="Get all jobs",
-    response_model=PagedJobs,
+    response_model=JobsInfo,
     responses={
         200: {
-            "model": PagedJobs,
+            "model": JobsInfo,
             "description": "Jobs successfully retrieved.",
         },
         422: {"description": "Data validation error.", "model": ProblemDetail},
@@ -67,7 +68,7 @@ async def get_all(
         None,
         description="Filter jobs by finish time.",
     ),
-) -> PagedJobs:
+) -> JobsInfo:
     """Get all jobs."""
     job_service = JobService(
         get_redis_settings(),
@@ -129,11 +130,13 @@ async def get_all(
 
     paging_jobs = jobs[offset : offset + limit]
 
-    return PagedJobs(
-        items=paging_jobs,
+    return JobsInfo(
         functions=functions,
         statistics=statistics,
-        count=len(jobs),
-        limit=limit,
-        offset=offset,
+        paged_jobs=Paged[Job](
+            items=paging_jobs,
+            count=len(jobs),
+            limit=limit,
+            offset=offset,
+        ),
     )

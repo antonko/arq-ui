@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     summary: str = "Interface for Arq background jobs."
     description: str = ""
 
-    cors_allowed_hosts: list[str] | None = None
+    cors_allowed_hosts: list[str] | None = ["http://localhost:5173"]
     api_prefix: str = "/arq"
 
     timezone: str = "UTC"
