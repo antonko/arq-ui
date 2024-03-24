@@ -16,7 +16,16 @@ def get_application() -> FastAPI:
     settings: Settings = get_app_settings()
     application = FastAPI(
         separate_input_output_schemas=False,
+        debug=settings.debug,
+        title=settings.title,
+        version=settings.version,
+        description=settings.description,
+        redoc_url=settings.redoc_url,
+        docs_url=settings.docs_url,
+        openapi_url=settings.openapi_url,
+        summary=settings.summary,
     )
+
     application.include_router(routers, prefix=settings.api_prefix)
 
     application.add_exception_handler(RequestValidationError, custom_validation_exception_handler)  # type: ignore
