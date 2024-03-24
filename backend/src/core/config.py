@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     redis_db: int = 0
 
     max_jobs: int = 50000
+    request_semaphore_jobs: int = 5
 
     model_config = SettingsConfigDict(env_file=os.getenv("ENV_FILE", ".env"))
 

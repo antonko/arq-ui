@@ -41,7 +41,7 @@ class Job(BaseModel):
     )
     enqueue_time: datetime = Field(
         description="Date and time when the job was enqueued",
-        examples=["2024-02-24T21:06:20.366000+03:00"],
+        examples=["2024-03-24T17:32:30.587000+00:00"],
     )
     result: str | None = Field(
         default=None,
@@ -51,12 +51,12 @@ class Job(BaseModel):
     start_time: datetime | None = Field(
         default=None,
         description="Date and time when the job was started",
-        examples=["2024-02-24T21:06:20.366000+03:00"],
+        examples=["2024-03-24T17:32:30.587000+00:00"],
     )
     finish_time: datetime | None = Field(
         default=None,
         description="Date and time when the job was finished",
-        examples=["2024-02-24T21:06:20.366000+03:00"],
+        examples=["2024-03-24T17:32:30.587000+00:00"],
     )
     queue_name: str | None = Field(
         default=None,

@@ -1,13 +1,17 @@
 import logging
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
+from core.config import Settings, get_app_settings
 from core.depends import get_lru_cache, get_redis_settings
 from fastapi import APIRouter, Query
 from schemas.job import JobSortBy, JobSortOrder, JobStatus, PagedJobs, Statistics
 from schemas.problem import ProblemDetail
-from services.arq_service import ArqService
+from services.job_service import JobService
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/jobs", tags=["Jobs"])
+settings: Settings = get_app_settings()
 
 
 @router.get(
@@ -47,10 +51,6 @@ async def get_all(
         None,
         description="Filter jobs by success status.",
     ),
-    queue_name: str | None = Query(  # noqa: B008
-        None,
-        description="Filter jobs by queue name.",
-    ),
     function: str | None = Query(  # noqa: B008
         None,
         description="Filter jobs by function name.",
@@ -59,10 +59,25 @@ async def get_all(
         None,
         description="Search for jobs by all fields.",
     ),
+    start_time: datetime | None = Query(  # noqa: B008
+        None,
+        description="Filter jobs by start time.",
+    ),
+    finish_time: datetime | None = Query(  # noqa: B008
+        None,
+        description="Filter jobs by finish time.",
+    ),
 ) -> PagedJobs:
     """Get all jobs."""
-    arq_service = ArqService(get_redis_settings(), get_lru_cache())
-    jobs = await arq_service.get_all_jobs()
+    job_service = JobService(
+        get_redis_settings(),
+        get_lru_cache(),
+        settings.request_semaphore_jobs,
+    )
+    # We retrieve all tasks because we cannot initially filter them directly in Redis.
+    # Subsequently, we filter them at the application level.
+    # This code is simple, so we don't separate it out.
+    jobs = await job_service.get_all_jobs(settings.max_jobs)
 
     functions: list[str] = list({job.function for job in jobs})
     statistics = Statistics(
@@ -73,14 +88,29 @@ async def get_all(
         failed=len([job for job in jobs if job.success is False]),
     )
 
+    if start_time:
+        start_time = start_time.replace(tzinfo=ZoneInfo(settings.timezone))
+        jobs = [
+            job
+            for job in jobs
+            if job.enqueue_time >= start_time
+            and (job.start_time is None or job.start_time >= start_time)
+        ]
+
+    if finish_time:
+        finish_time = finish_time.replace(tzinfo=ZoneInfo(settings.timezone))
+        jobs = [
+            job
+            for job in jobs
+            if job.enqueue_time <= finish_time
+            and (job.finish_time is None or job.finish_time <= finish_time)
+        ]
+
     if len(statuses) > 0:
         jobs = [job for job in jobs if job.status in statuses]
 
     if success is not None:
         jobs = [job for job in jobs if job.success == success]
-
-    if queue_name:
-        jobs = [job for job in jobs if job.queue_name == queue_name]
 
     if function:
         jobs = [job for job in jobs if job.function == function]
