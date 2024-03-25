@@ -27,7 +27,6 @@ module.exports = {
   ignorePatterns: ["dist", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",
   rules: {
-    "indent": ["error", 2],
     "react-refresh/only-export-components": [
       "warn",
       { allowConstantExport: true },

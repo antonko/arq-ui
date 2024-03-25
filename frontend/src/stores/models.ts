@@ -27,9 +27,18 @@ export class PagedJobs {
   offset: number = 0;
   sort_by: string = "enqueue_time";
   sort_order: string = "desc";
+  toggle_jobs: string[] = [];
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  setToggleJob(jobId: string) {
+    if (this.toggle_jobs.includes(jobId)) {
+      this.toggle_jobs = this.toggle_jobs.filter((id) => id !== jobId);
+    } else {
+      this.toggle_jobs = [...this.toggle_jobs, jobId];
+    }
   }
 }
 

@@ -1,0 +1,64 @@
+.th {
+  padding: 0;
+
+  &:hover {
+    background-color: light-dark(
+      var(--mantine-color-gray-0),
+      var(--mantine-color-dark-6)
+    );
+  }
+}
+
+.td {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tr {
+  cursor: pointer;
+  &:hover {
+    background-color: light-dark(
+      var(--mantine-color-gray-0),
+      var(--mantine-color-dark-6)
+    );
+  }
+}
+
+.expander_tr {
+  padding: 0;
+  margin: 0;
+
+  td {
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.expandedContent {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.1s ease-in-out;
+}
+
+.expandedContentshow {
+  max-height: 300px; 
+}
+
+.control {
+  width: 100%;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+
+  @mixin hover {
+    background-color: light-dark(
+      var(--mantine-color-gray-0),
+      var(--mantine-color-dark-6)
+    );
+  }
+}
+
+.icon {
+  width: rem(21px);
+  height: rem(21px);
+  border-radius: rem(21px);
+}

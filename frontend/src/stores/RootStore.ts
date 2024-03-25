@@ -19,7 +19,7 @@ export class RootStore {
 
   async loadData() {
     this.isLoading = true;
-
+    this.tableJobs.toggle_jobs = [];
     const params: IFetchJobsParams = {
       limit: this.tableJobs.limit,
       offset: this.tableJobs.offset,
