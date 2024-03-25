@@ -1,17 +1,37 @@
+import {
+  ColorSchemeScript,
+  MantineProvider,
+  Stack,
+  Container,
+} from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import { useEffect } from "react";
 
-import "./App.css";
-import "./index.css";
-import { TableLogs } from "./components/tablejobs/tablejobs";
+import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
+import Header from "./components/header";
+import { TableJobs } from "./components/tablejobs";
 import { rootStore } from "./stores";
+
 function App() {
   useEffect(() => {
     rootStore.loadData();
   }, []);
   return (
     <>
-      <h1>arq UI</h1>
-      <TableLogs />
+      <ColorSchemeScript defaultColorScheme="auto" />
+      <MantineProvider
+        defaultColorScheme="auto"
+        theme={{ primaryColor: "gray" }}
+      >
+        <Notifications />
+        <Container size="xl">
+          <Stack mih={"100vh"}>
+            <Header />
+            <TableJobs />
+          </Stack>
+        </Container>
+      </MantineProvider>
     </>
   );
 }
