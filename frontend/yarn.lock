@@ -372,6 +372,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mantine/hooks@npm:^7.6.2":
+  version: 7.6.2
+  resolution: "@mantine/hooks@npm:7.6.2"
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 10c0/95d2e33de0a7fa5dba0a579944e3846c5848b7c069a919e155cb25e712d0e47f1839a1edf7a9e63aa10ec22de2de41bd7f4cb631b5c2aebca0332e29b398947d
+  languageName: node
+  linkType: hard
+
 "@mantine/notifications@npm:^7.6.2":
   version: 7.6.2
   resolution: "@mantine/notifications@npm:7.6.2"
@@ -1029,6 +1038,7 @@ __metadata:
   resolution: "arq-ui-frontend@workspace:."
   dependencies:
     "@mantine/core": "npm:^7.6.2"
+    "@mantine/hooks": "npm:^7.6.2"
     "@mantine/notifications": "npm:^7.6.2"
     "@tabler/icons-react": "npm:^3.1.0"
     "@types/react": "npm:^18.2.66"

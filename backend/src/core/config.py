@@ -9,16 +9,16 @@ class Settings(BaseSettings):
 
     debug: bool = False
     environment: str = "production"
-    docs_url: str = "/arq/docs"
-    openapi_url: str = "/arq/openapi.json"
-    redoc_url: str = "/arq/redoc"
+    docs_url: str = "/arq/api/docs"
+    openapi_url: str = "/arq/api/openapi.json"
+    redoc_url: str = "/arq/api/redoc"
     title: str = "Arq UI API"
     version: str = "0.1.0"
     summary: str = "Interface for Arq background jobs."
     description: str = ""
 
     cors_allowed_hosts: list[str] | None = ["http://localhost:5173"]
-    api_prefix: str = "/arq"
+    api_prefix: str = "/arq/api"
 
     timezone: str = "UTC"
 

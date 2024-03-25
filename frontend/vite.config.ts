@@ -7,5 +7,5 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
   },
-  base: "/arq-ui/",
+  base: "/arq/ui",
 });
