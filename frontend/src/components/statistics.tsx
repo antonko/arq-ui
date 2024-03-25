@@ -39,7 +39,7 @@ const Card = ({
 );
 
 export const Statistics = observer(() => (
-  <SimpleGrid cols={4}>
+  <SimpleGrid cols={{ xs: 1, sm: 2, md: 4 }}>
     <Card
       title="Total jobs"
       value={rootStore.statistics.total}

@@ -42,6 +42,7 @@ export const Filters = observer(() => {
         <TextInput
           placeholder="Search"
           mb="md"
+          miw="228px"
           value={rootStore.filterJobs.search}
           leftSection={
             <IconSearch

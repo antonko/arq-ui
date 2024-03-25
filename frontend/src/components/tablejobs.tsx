@@ -11,6 +11,8 @@ import {
   LoadingOverlay,
   Badge,
   Tooltip,
+  Space,
+  ScrollArea,
 } from "@mantine/core";
 import {
   IconSelector,
@@ -106,10 +108,9 @@ export const TableJobs = observer(() => {
         <Table.Td className={classes.td}>{row.function}</Table.Td>
         <Table.Td className={classes.td}>{row.start_time}</Table.Td>
         <Table.Td className={classes.td}>{row.execution_duration}</Table.Td>
-        <Table.Td className={classes.td}>{row.args}</Table.Td>
       </Table.Tr>
       <Table.Tr className={classes.expander_tr} key={`"${row.id}1`}>
-        <Table.Td colSpan={7}>
+        <Table.Td colSpan={6}>
           <div
             className={`${classes.expandedContent} ${
               rootStore.tableJobs.toggle_jobs.includes(row.id)
@@ -136,71 +137,62 @@ export const TableJobs = observer(() => {
 
   return (
     <>
-      <Box pos="relative">
-        <LoadingOverlay
-          visible={rootStore.isLoading}
-          zIndex={200}
-          overlayProps={{ radius: "sm", blur: 1 }}
-        />
-        <Table
-          horizontalSpacing="md"
-          verticalSpacing="xs"
-          miw={700}
-          layout="fixed"
-        >
-          <Table.Tbody>
-            <Table.Tr>
-              <Th
-                onSort={() => rootStore.setSortBy("enqueue_time")}
-                key="enqueue_time"
-                name="enqueue_time"
-              >
-                Enqueue time
-              </Th>
-              <Th onSort={() => rootStore.setSortBy("id")} key="id" name="id">
-                ID
-              </Th>
-              <Th
-                onSort={() => rootStore.setSortBy("status")}
-                key="status"
-                name="status"
-              >
-                Status
-              </Th>
-              <Th
-                onSort={() => rootStore.setSortBy("function")}
-                key="functio"
-                name="function"
-              >
-                Function
-              </Th>
-              <Th
-                onSort={() => rootStore.setSortBy("start_time")}
-                key="start_time"
-                name="start_time"
-              >
-                Start Time
-              </Th>
-              <Th
-                onSort={() => rootStore.setSortBy("execution_duration")}
-                key="duration"
-                name="execution_duration"
-              >
-                Duration
-              </Th>
-              <Th
-                onSort={() => rootStore.setSortBy("args")}
-                key="args"
-                name="args"
-              >
-                Args
-              </Th>
-            </Table.Tr>
-          </Table.Tbody>
-          <Table.Tbody>{rows}</Table.Tbody>
-        </Table>
-      </Box>
-      <Center mt="xl">
+      <ScrollArea>
+        <Box pos="relative" miw={900}>
+          <LoadingOverlay
+            visible={rootStore.isLoading}
+            zIndex={200}
+            overlayProps={{ radius: "sm", blur: 1 }}
+          />
+          <Table horizontalSpacing="md" verticalSpacing="xs" layout="fixed">
+            <Table.Tbody>
+              <Table.Tr>
+                <Th
+                  onSort={() => rootStore.setSortBy("enqueue_time")}
+                  key="enqueue_time"
+                  name="enqueue_time"
+                >
+                  Enqueue time
+                </Th>
+                <Th onSort={() => rootStore.setSortBy("id")} key="id" name="id">
+                  ID
+                </Th>
+                <Th
+                  onSort={() => rootStore.setSortBy("status")}
+                  key="status"
+                  name="status"
+                >
+                  Status
+                </Th>
+                <Th
+                  onSort={() => rootStore.setSortBy("function")}
+                  key="functio"
+                  name="function"
+                >
+                  Function
+                </Th>
+                <Th
+                  onSort={() => rootStore.setSortBy("start_time")}
+                  key="start_time"
+                  name="start_time"
+                >
+                  Start Time
+                </Th>
+                <Th
+                  onSort={() => rootStore.setSortBy("execution_duration")}
+                  key="duration"
+                  name="execution_duration"
+                >
+                  Duration
+                </Th>
+              </Table.Tr>
+            </Table.Tbody>
+            <Table.Tbody>{rows}</Table.Tbody>
+          </Table>
+        </Box>
+      </ScrollArea>
+      <Space h="md" />
+      <Center>
         <Pagination
           total={rootStore.totalPages}
           value={rootStore.currentPage}

@@ -59,11 +59,11 @@ export class RootStore {
 
   clearFilter() {
     this.filterJobs = new FilterJobs();
+    this.tableJobs.offset = 0;
     this.loadData();
   }
 
   setPage(page: number) {
-    console.log("setPage", page);
     this.tableJobs.offset = (page - 1) * this.tableJobs.limit;
     this.loadData();
   }

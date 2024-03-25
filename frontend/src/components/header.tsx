@@ -1,7 +1,7 @@
 import {
   ActionIcon,
-  Box,
   Button,
+  Container,
   Group,
   useComputedColorScheme,
   useMantineColorScheme,
@@ -24,7 +24,7 @@ function Header() {
   });
   return (
     <header className={classes.header}>
-      <Box size="xl" className={classes.inner}>
+      <Container size="xl" className={classes.inner}>
         <h2>arq UI</h2>
         <Group>
           <Button
@@ -53,7 +53,7 @@ function Header() {
             <IconMoon className={cx(classes.icon, classes.dark)} stroke={1.5} />
           </ActionIcon>
         </Group>
-      </Box>
+      </Container>
     </header>
   );
 }
