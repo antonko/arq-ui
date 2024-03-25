@@ -9,6 +9,7 @@ import { useEffect } from "react";
 
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
+import { Filters } from "./components/filters";
 import Header from "./components/header";
 import { Statistics } from "./components/statistics";
 import { TableJobs } from "./components/tablejobs";
@@ -30,6 +31,7 @@ function App() {
           <Stack mih={"100vh"}>
             <Header />
             <Statistics />
+            <Filters />
             <TableJobs />
           </Stack>
         </Container>
