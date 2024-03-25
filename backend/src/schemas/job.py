@@ -1,6 +1,5 @@
 from datetime import datetime
 from enum import Enum
-from typing import Any
 from zoneinfo import ZoneInfo
 
 from core.config import Settings, get_app_settings
@@ -80,7 +79,7 @@ class Job(BaseModel):
         examples=[["https://florm.io"]],
     )
 
-    kwargs: dict[str, Any] | None = Field(
+    kwargs: str | None = Field(
         default=None,
         description="Keyword arguments passed to the function that was executed by the job",
         examples=[],

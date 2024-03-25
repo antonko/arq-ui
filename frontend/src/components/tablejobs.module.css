@@ -1,12 +1,3 @@
-.th {
-  padding: 0;
-
-  &:hover {
-    background-color: light-dark(var(--mantine-color-gray-0),
-        var(--mantine-color-dark-6));
-  }
-}
-
 .td {
   overflow: hidden;
   white-space: nowrap;
@@ -15,18 +6,13 @@
 
 .tr {
   cursor: pointer;
-
-  &:hover {
-    background-color: light-dark(var(--mantine-color-gray-0),
-        var(--mantine-color-dark-6));
-  }
 }
 
 .expander_tr {
   padding: 0;
   margin: 0;
 
-  td {
+  >td {
     padding: 0;
     margin: 0;
   }
@@ -39,7 +25,7 @@
 }
 
 .expandedContentshow {
-  max-height: 300px;
+  max-height: 700px;
 }
 
 .control {

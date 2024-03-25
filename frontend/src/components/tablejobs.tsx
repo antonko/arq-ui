@@ -13,6 +13,8 @@ import {
   Tooltip,
   Space,
   ScrollArea,
+  SimpleGrid,
+  Code,
 } from "@mantine/core";
 import {
   IconSelector,
@@ -118,16 +120,98 @@ export const TableJobs = observer(() => {
                 : ""
             }`}
           >
-            <Paper shadow="xs" p="xl">
-              <Text>
-                {row.enqueue_time} <br />
-                {row.id} <br />
-                {row.status} <br />
-                {row.function} <br />
-                {row.start_time} <br />
-                {row.execution_duration} <br />
-                {row.args} <br />
-              </Text>
+            <Paper p="md">
+              <SimpleGrid cols={2} spacing="xl">
+                <Box>
+                  <Table
+                    horizontalSpacing="sm"
+                    verticalSpacing="sm"
+                    highlightOnHover
+                    striped
+                    styles={{}}
+                  >
+                    <Table.Tbody>
+                      <Table.Tr
+                        style={{ overflow: "hidden", textOverflow: "ellipsis" }}
+                      >
+                        <Table.Td>id</Table.Td>
+                        <Table.Td
+                          style={{
+                            overflow: "hidden",
+                          }}
+                        >
+                          {row.id}
+                        </Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td>queue name</Table.Td>
+                        <Table.Td>{row.queue_name}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td>function</Table.Td>
+                        <Table.Td>{row.function}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td>status</Table.Td>
+                        <Table.Td>{row.status}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td>job try</Table.Td>
+                        <Table.Td>{row.job_try}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td>success</Table.Td>
+                        <Table.Td>{String(row.success)}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td>enqueue time</Table.Td>
+                        <Table.Td>{row.enqueue_time}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td>start time</Table.Td>
+                        <Table.Td>{row.start_time}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td>finish time</Table.Td>
+                        <Table.Td>{row.finish_time}</Table.Td>
+                      </Table.Tr>
+                      <Table.Tr>
+                        <Table.Td>execution duration (sec)</Table.Td>
+                        <Table.Td>{row.execution_duration}</Table.Td>
+                      </Table.Tr>
+                    </Table.Tbody>
+                  </Table>
+                </Box>
+                <Box>
+                  args:
+                  <Code block mt={10} mah={200}>
+                    {row.args}
+                  </Code>
+                  <br />
+                  kwargs:
+                  <Code block mt={10} mah={200}>
+                    {(() => {
+                      try {
+                        return JSON.stringify(JSON.parse(row.kwargs), null, 2);
+                      } catch (e) {
+                        return row.kwargs;
+                      }
+                    })()}
+                  </Code>
+                  <br />
+                  result:
+                  <Code block mt={10} mah={500}>
+                    {(() => {
+                      try {
+                        return JSON.stringify(JSON.parse(row.result), null, 2);
+                      } catch (e) {
+                        return row.result;
+                      }
+                    })()}
+                  </Code>
+                  <br />
+                </Box>
+              </SimpleGrid>
             </Paper>
           </div>
         </Table.Td>
@@ -144,7 +228,14 @@ export const TableJobs = observer(() => {
             zIndex={200}
             overlayProps={{ radius: "sm", blur: 1 }}
           />
-          <Table horizontalSpacing="md" verticalSpacing="xs" layout="fixed">
+          <Table
+            striped
+            highlightOnHover
+            withTableBorder
+            horizontalSpacing="md"
+            verticalSpacing="lg"
+            layout="fixed"
+          >
             <Table.Tbody>
               <Table.Tr>
                 <Th

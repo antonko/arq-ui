@@ -68,7 +68,7 @@ class JobService:
                     status=status.value,
                     function=job_result.function,
                     args=job_result.args,
-                    kwargs=job_result.kwargs,
+                    kwargs=str(job_result.kwargs) if job_result.kwargs else None,
                     job_try=job_result.job_try,
                     result=str(job_result.result) if job_result.result else None,
                     success=job_result.success,
@@ -90,7 +90,7 @@ class JobService:
                     status=status.value,
                     function=job.function,
                     args=job.args,
-                    kwargs=job.kwargs,
+                    kwargs=str(job.kwargs) if job.kwargs else None,
                     job_try=job.job_try,
                 )
             return job_schema
