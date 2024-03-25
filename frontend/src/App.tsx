@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import Header from "./components/header";
+import { Statistics } from "./components/statistics";
 import { TableJobs } from "./components/tablejobs";
 import { rootStore } from "./stores";
 
@@ -28,6 +29,7 @@ function App() {
         <Container size="xl">
           <Stack mih={"100vh"}>
             <Header />
+            <Statistics />
             <TableJobs />
           </Stack>
         </Container>

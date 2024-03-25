@@ -2,10 +2,8 @@
   padding: 0;
 
   &:hover {
-    background-color: light-dark(
-      var(--mantine-color-gray-0),
-      var(--mantine-color-dark-6)
-    );
+    background-color: light-dark(var(--mantine-color-gray-0),
+        var(--mantine-color-dark-6));
   }
 }
 
@@ -17,11 +15,10 @@
 
 .tr {
   cursor: pointer;
+
   &:hover {
-    background-color: light-dark(
-      var(--mantine-color-gray-0),
-      var(--mantine-color-dark-6)
-    );
+    background-color: light-dark(var(--mantine-color-gray-0),
+        var(--mantine-color-dark-6));
   }
 }
 
@@ -42,7 +39,7 @@
 }
 
 .expandedContentshow {
-  max-height: 300px; 
+  max-height: 300px;
 }
 
 .control {
@@ -50,10 +47,8 @@
   padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
 
   @mixin hover {
-    background-color: light-dark(
-      var(--mantine-color-gray-0),
-      var(--mantine-color-dark-6)
-    );
+    background-color: light-dark(var(--mantine-color-gray-0),
+        var(--mantine-color-dark-6));
   }
 }
 
