@@ -1,0 +1,19 @@
+.root {
+  padding: 0px 0px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.item {
+  flex: 1;
+  height: 50px;
+  margin: 0 1px;
+  border-radius: 2px;
+  background-color: #028d63;
+  transition: background-color 0.4s;
+  cursor: pointer;
+}
+
+.selected {
+  background-color: #00d3da;
+}

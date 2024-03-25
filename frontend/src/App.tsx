@@ -15,6 +15,7 @@ import Footer from "./components/footer";
 import Header from "./components/header";
 import { Statistics } from "./components/statistics";
 import { TableJobs } from "./components/tablejobs";
+import TimeLine from "./components/timeline";
 import { rootStore } from "./stores";
 
 function App() {
@@ -34,7 +35,9 @@ function App() {
         <Container size="xl">
           <Stack mih={"100vh"}>
             <Statistics />
-            <Space h="lg" />
+            <Space h="sm" />
+            <TimeLine />
+            <Space h="sm" />
             <Filters />
             <TableJobs />
             <Space h="lg" />
