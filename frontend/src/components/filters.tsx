@@ -41,7 +41,6 @@ export const Filters = observer(() => {
       <Grid.Col span="auto">
         <TextInput
           placeholder="Search"
-          mb="md"
           miw="228px"
           value={rootStore.filterJobs.search}
           leftSection={

@@ -4,6 +4,8 @@ import {
   Stack,
   Container,
   Space,
+  Box,
+  Flex,
 } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { useEffect } from "react";
@@ -30,20 +32,23 @@ function App() {
         theme={{ primaryColor: "gray" }}
       >
         <Notifications />
-        <Header />
-        <Space h="xl" />
-        <Container size="xl">
-          <Stack mih={"100vh"}>
-            <Statistics />
-            <Space h="sm" />
-            <TimeLine />
-            <Space h="sm" />
-            <Filters />
-            <TableJobs />
-            <Space h="lg" />
-          </Stack>
-        </Container>
-        <Footer />
+        <Flex mih={"100vh"} direction="column">
+          <Box style={{ flexGrow: 1 }}>
+            <Header />
+            <Space h="xl" />
+            <Container size="xl">
+              <Stack gap="xl">
+                <Space h="xs" />
+                <Statistics />
+                <Space h="xs" />
+                <TimeLine />
+                <Filters />
+                <TableJobs />
+              </Stack>
+            </Container>
+          </Box>
+          <Footer />
+        </Flex>
       </MantineProvider>
     </>
   );
