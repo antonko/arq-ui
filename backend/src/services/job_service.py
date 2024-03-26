@@ -56,14 +56,15 @@ class JobService:
             )
 
             arq_job = ArqJob(key_id_without_prefix, redis)
-            redis_raw = await redis.get(key_id)
             status = await arq_job.status()
 
             if status == arq.jobs.JobStatus.complete:
+                complete_key: str = arq.constants.result_key_prefix + key_id_without_prefix
+                redis_raw = await redis.get(complete_key)
                 job_result: arq.jobs.JobResult = arq.jobs.deserialize_result(redis_raw)
 
                 job_schema = Job(
-                    id=key_id,
+                    id=key_id_without_prefix,
                     enqueue_time=job_result.enqueue_time,
                     status=status.value,
                     function=job_result.function,
@@ -83,9 +84,11 @@ class JobService:
                 self.cache.set(key_id, job_schema)
 
             else:
+                keys_queued_job = arq.constants.job_key_prefix + key_id_without_prefix
+                redis_raw = await redis.get(keys_queued_job)
                 job: arq.jobs.JobDef = arq.jobs.deserialize_job(redis_raw)
                 job_schema = Job(
-                    id=key_id,
+                    id=key_id_without_prefix,
                     enqueue_time=job.enqueue_time.replace(tzinfo=ZoneInfo(settings.timezone)),
                     status=status.value,
                     function=job.function,
@@ -112,3 +115,19 @@ class JobService:
         jobs_task = await asyncio.gather(*tasks)
         jobs: list[Job] = [job for job in jobs_task if job is not None]
         return jobs
+
+    async def get_job_by_id(self, job_id: str) -> Job | None:
+        """Get job by id."""
+        redis = await create_pool(self.redis_settings)
+        key_id = arq.constants.job_key_prefix + job_id
+        return await self.fetch_job_info(
+            asyncio.Semaphore(self.request_semaphore_jobs),
+            redis,
+            key_id,
+        )
+
+    async def abort_job(self, job_id: str) -> bool:
+        """Abort job."""
+        redis = await create_pool(self.redis_settings)
+        job: ArqJob = ArqJob(job_id, redis)
+        return await job.abort()

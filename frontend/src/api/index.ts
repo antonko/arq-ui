@@ -1,4 +1,4 @@
-import { IFetchJobsParams, IJobsInfo } from "./types";
+import { IFetchJobsParams, IJob, IJobsInfo } from "./types";
 
 /**
  * Fetches jobs from the API based on the specified parameters.
@@ -36,5 +36,30 @@ export function fetchJobs(params: IFetchJobsParams = {}): Promise<IJobsInfo> {
       throw new Error(data.text || "Unknown error");
     }
     return data as IJobsInfo;
+  });
+}
+
+export function abortJob(jobId: string): Promise<void> {
+  const jobsUrl = new URL("jobs", import.meta.env.VITE_API_HOST).toString();
+  const url = `${jobsUrl}/${jobId}`;
+
+  return fetch(url, { method: "DELETE" }).then(async (response) => {
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.text || "Unknown error");
+    }
+  });
+}
+
+export function fetchJob(jobId: string): Promise<IJob> {
+  const jobsUrl = new URL("jobs", import.meta.env.VITE_API_HOST).toString();
+  const url = `${jobsUrl}/${jobId}`;
+
+  return fetch(url).then(async (response) => {
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.text || "Unknown error");
+    }
+    return data;
   });
 }

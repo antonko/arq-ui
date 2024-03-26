@@ -1,5 +1,12 @@
 import { makeAutoObservable } from "mobx";
 
+export enum AbortStatus {
+  NotStarted = "not_started",
+  InProgress = "in_progress",
+  Completed = "completed",
+  Failed = "failed", // Если нужно отслеживать неудачные попытки отмены
+}
+
 export class Job {
   id: string = "";
   status: string = "";
@@ -14,9 +21,17 @@ export class Job {
   args: string = "";
   kwargs: string = "";
   job_try: number = 0;
+  abort_status: AbortStatus = AbortStatus.NotStarted;
 
-  constructor() {
+  constructor(jobData?: Partial<Job>) {
+    if (jobData) {
+      Object.assign(this, jobData);
+    }
     makeAutoObservable(this);
+  }
+
+  is_abortable(): boolean {
+    return ["queued", "deferred", "in_progress"].includes(this.status);
   }
 }
 

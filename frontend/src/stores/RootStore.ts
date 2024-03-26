@@ -1,10 +1,10 @@
 import { notifications } from "@mantine/notifications";
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { fetchJobs } from "../api";
+import { abortJob, fetchJob, fetchJobs } from "../api";
 import { IFetchJobsParams, IJobsInfo } from "../api/types";
 
-import { FilterJobs, PagedJobs, Statistics } from "./models";
+import { AbortStatus, FilterJobs, Job, PagedJobs, Statistics } from "./models";
 
 export class RootStore {
   tableJobs: PagedJobs = new PagedJobs();
@@ -37,7 +37,9 @@ export class RootStore {
     try {
       const jobsData: IJobsInfo = await fetchJobs(params);
       runInAction(() => {
-        this.tableJobs.items = jobsData.paged_jobs.items;
+        this.tableJobs.items = jobsData.paged_jobs.items.map(
+          (jobData) => new Job(jobData),
+        );
         this.tableJobs.count = jobsData.paged_jobs.count;
         this.tableJobs.limit = jobsData.paged_jobs.limit;
         this.functions = jobsData.functions;
@@ -54,6 +56,36 @@ export class RootStore {
       });
     } finally {
       this.isLoading = false;
+    }
+  }
+
+  async loadJob(jobId: string) {
+    const newJob = await fetchJob(jobId);
+    const job = this.tableJobs.items.find((job) => job.id === jobId);
+    if (job) {
+      Object.assign(job, newJob);
+    }
+  }
+
+  async abortJob(jobId: string) {
+    const job = this.tableJobs.items.find((job) => job.id === jobId);
+    if (!job) {
+      return;
+    }
+    try {
+      job.abort_status = AbortStatus.InProgress;
+      await abortJob(jobId);
+      job.abort_status = AbortStatus.Completed;
+      this.loadJob(jobId);
+    } catch (error) {
+      console.error("Failed to abort job", error);
+      job.abort_status = AbortStatus.Failed;
+      const message = error instanceof Error ? error.message : "Unknown error";
+      notifications.show({
+        title: "Failed to abort job",
+        message: String(message),
+        color: "red",
+      });
     }
   }
 

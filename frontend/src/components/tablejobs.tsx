@@ -15,6 +15,7 @@ import {
   ScrollArea,
   SimpleGrid,
   Code,
+  Button,
 } from "@mantine/core";
 import {
   IconSelector,
@@ -25,6 +26,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { rootStore } from "../stores";
+import { AbortStatus } from "../stores/models";
 
 import classes from "./tablejobs.module.css";
 
@@ -95,27 +97,27 @@ function StatusControl(status: string, success: boolean) {
 }
 
 export const TableJobs = observer(() => {
-  const rows = rootStore.tableJobs.items.map((row) => (
-    <React.Fragment key={row.id}>
+  const rows = rootStore.tableJobs.items.map((job) => (
+    <React.Fragment key={job.id}>
       <Table.Tr
-        key={row.id}
+        key={job.id}
         className={classes.tr}
-        onClick={() => rootStore.tableJobs.setToggleJob(row.id)}
+        onClick={() => rootStore.tableJobs.setToggleJob(job.id)}
       >
-        <Table.Td className={classes.td}>{row.enqueue_time}</Table.Td>
-        <Table.Td className={classes.td}>{row.id}</Table.Td>
+        <Table.Td className={classes.td}>{job.enqueue_time}</Table.Td>
+        <Table.Td className={classes.td}>{job.id}</Table.Td>
         <Table.Td className={classes.td}>
-          {StatusControl(row.status, row.success)}
+          {StatusControl(job.status, job.success)}
         </Table.Td>
-        <Table.Td className={classes.td}>{row.function}</Table.Td>
-        <Table.Td className={classes.td}>{row.start_time}</Table.Td>
-        <Table.Td className={classes.td}>{row.execution_duration}</Table.Td>
+        <Table.Td className={classes.td}>{job.function}</Table.Td>
+        <Table.Td className={classes.td}>{job.start_time}</Table.Td>
+        <Table.Td className={classes.td}>{job.execution_duration}</Table.Td>
       </Table.Tr>
-      <Table.Tr className={classes.expander_tr} key={`"${row.id}1`}>
+      <Table.Tr className={classes.expander_tr} key={`"${job.id}1`}>
         <Table.Td colSpan={6}>
           <div
             className={`${classes.expandedContent} ${
-              rootStore.tableJobs.toggle_jobs.includes(row.id)
+              rootStore.tableJobs.toggle_jobs.includes(job.id)
                 ? classes.expandedContentshow
                 : ""
             }`}
@@ -140,61 +142,73 @@ export const TableJobs = observer(() => {
                             overflow: "hidden",
                           }}
                         >
-                          {row.id}
+                          {job.id}
                         </Table.Td>
                       </Table.Tr>
                       <Table.Tr>
                         <Table.Td>queue name</Table.Td>
-                        <Table.Td>{row.queue_name}</Table.Td>
+                        <Table.Td>{job.queue_name}</Table.Td>
                       </Table.Tr>
                       <Table.Tr>
                         <Table.Td>function</Table.Td>
-                        <Table.Td>{row.function}</Table.Td>
+                        <Table.Td>{job.function}</Table.Td>
                       </Table.Tr>
                       <Table.Tr>
                         <Table.Td>status</Table.Td>
-                        <Table.Td>{row.status}</Table.Td>
+                        <Table.Td>{job.status}</Table.Td>
                       </Table.Tr>
                       <Table.Tr>
                         <Table.Td>job try</Table.Td>
-                        <Table.Td>{row.job_try}</Table.Td>
+                        <Table.Td>{job.job_try}</Table.Td>
                       </Table.Tr>
                       <Table.Tr>
                         <Table.Td>success</Table.Td>
-                        <Table.Td>{String(row.success)}</Table.Td>
+                        <Table.Td>{String(job.success)}</Table.Td>
                       </Table.Tr>
                       <Table.Tr>
                         <Table.Td>enqueue time</Table.Td>
-                        <Table.Td>{row.enqueue_time}</Table.Td>
+                        <Table.Td>{job.enqueue_time}</Table.Td>
                       </Table.Tr>
                       <Table.Tr>
                         <Table.Td>start time</Table.Td>
-                        <Table.Td>{row.start_time}</Table.Td>
+                        <Table.Td>{job.start_time}</Table.Td>
                       </Table.Tr>
                       <Table.Tr>
                         <Table.Td>finish time</Table.Td>
-                        <Table.Td>{row.finish_time}</Table.Td>
+                        <Table.Td>{job.finish_time}</Table.Td>
                       </Table.Tr>
                       <Table.Tr>
                         <Table.Td>execution duration (sec)</Table.Td>
-                        <Table.Td>{row.execution_duration}</Table.Td>
+                        <Table.Td>{job.execution_duration}</Table.Td>
                       </Table.Tr>
                     </Table.Tbody>
                   </Table>
                 </Box>
                 <Box>
+                  {job.is_abortable() && (
+                    <>
+                      <Button
+                        onClick={() => rootStore.abortJob(job.id)}
+                        loading={job.abort_status === AbortStatus.InProgress}
+                        disabled={job.abort_status === AbortStatus.Completed}
+                      >
+                        Abort job
+                      </Button>
+                      <Space h="xl" />
+                    </>
+                  )}
                   args:
                   <Code block mt={10} mah={200}>
-                    {row.args}
+                    {job.args}
                   </Code>
                   <br />
                   kwargs:
                   <Code block mt={10} mah={200}>
                     {(() => {
                       try {
-                        return JSON.stringify(JSON.parse(row.kwargs), null, 2);
+                        return JSON.stringify(JSON.parse(job.kwargs), null, 2);
                       } catch (e) {
-                        return row.kwargs;
+                        return job.kwargs;
                       }
                     })()}
                   </Code>
@@ -203,9 +217,9 @@ export const TableJobs = observer(() => {
                   <Code block mt={10} mah={500}>
                     {(() => {
                       try {
-                        return JSON.stringify(JSON.parse(row.result), null, 2);
+                        return JSON.stringify(JSON.parse(job.result), null, 2);
                       } catch (e) {
-                        return row.result;
+                        return job.result;
                       }
                     })()}
                   </Code>

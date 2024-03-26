@@ -4,7 +4,7 @@ from zoneinfo import ZoneInfo
 
 from core.config import Settings, get_app_settings
 from core.depends import get_lru_cache, get_redis_settings
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 from schemas.job import Job, JobsInfo, JobSortBy, JobSortOrder, JobStatus, Statistics
 from schemas.paged import Paged
 from schemas.problem import ProblemDetail
@@ -140,3 +140,60 @@ async def get_all(
             offset=offset,
         ),
     )
+
+
+@router.get(
+    "/{job_id}",
+    summary="Get job by id",
+    response_model=Job,
+    responses={
+        200: {
+            "model": Job,
+            "description": "Job successfully retrieved.",
+        },
+        404: {"description": "Job not found.", "model": ProblemDetail},
+        422: {"description": "Data validation error.", "model": ProblemDetail},
+        500: {"description": "Internal server error.", "model": ProblemDetail},
+    },
+)
+async def get_job_by_id(job_id: str) -> Job:
+    """Get job by id."""
+    job_service = JobService(
+        get_redis_settings(),
+        get_lru_cache(),
+        settings.request_semaphore_jobs,
+    )
+    job = await job_service.get_job_by_id(job_id)
+    if not job:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Job with id {job_id} not found.",
+        )
+    return job
+
+
+@router.delete(
+    "/{job_id}",
+    summary="Abort job",
+    responses={
+        200: {
+            "description": "Job successfully aborted.",
+        },
+        400: {"description": "Failed to abort the job.", "model": ProblemDetail},
+        422: {"description": "Data validation error.", "model": ProblemDetail},
+        500: {"description": "Internal server error.", "model": ProblemDetail},
+    },
+)
+async def abort_job(job_id: str) -> None:
+    """Abort job."""
+    job_service = JobService(
+        get_redis_settings(),
+        get_lru_cache(),
+        settings.request_semaphore_jobs,
+    )
+    result: bool = await job_service.abort_job(job_id)
+    if not result:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Failed to abort the job with id {job_id}.",
+        )
