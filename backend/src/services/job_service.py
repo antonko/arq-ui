@@ -76,9 +76,9 @@ class JobService:
                     start_time=job_result.start_time.replace(tzinfo=ZoneInfo(settings.timezone)),
                     finish_time=job_result.finish_time.replace(tzinfo=ZoneInfo(settings.timezone)),
                     queue_name=job_result.queue_name,
-                    execution_duration=(job_result.finish_time - job_result.start_time)
-                    .total_seconds()
-                    .is_integer(),
+                    execution_duration=int(
+                        (job_result.finish_time - job_result.start_time).total_seconds(),
+                    ),
                 )
                 # Cache only completed jobs
                 self.cache.set(key_id, job_schema)
@@ -107,7 +107,7 @@ class JobService:
         processed_keys = [key.decode() for key in keys_queued + keys_results]
 
         if len(processed_keys) > max_jobs:
-            raise ValueError("There are too many keys in Redis, processing has been halted.")
+            raise ValueError(f"There are too many tasks in Redis (max {max_jobs}), I won't work.")
 
         semaphore = asyncio.Semaphore(self.request_semaphore_jobs)
 

@@ -13,10 +13,10 @@ export interface IJob {
   id: string;
   status: string;
   success: boolean;
-  enqueue_time: string;
+  enqueue_time: Date;
   result: string;
-  start_time: string;
-  finish_time: string;
+  start_time: Date | null;
+  finish_time: Date | null;
   queue_name: string;
   execution_duration: number;
   function: string;

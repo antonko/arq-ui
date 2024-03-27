@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from core.config import Settings, get_app_settings
@@ -79,6 +79,15 @@ async def get_all(
     # Subsequently, we filter them at the application level.
     # This code is simple, so we don't separate it out.
     jobs = await job_service.get_all_jobs(settings.max_jobs)
+
+    # Filter the jobs
+    twenty_four_hours_ago = datetime.now(UTC) - timedelta(hours=24)
+    jobs = [
+        job
+        for job in jobs
+        if job.enqueue_time >= twenty_four_hours_ago
+        or (job.start_time and job.start_time >= twenty_four_hours_ago)
+    ]
 
     functions: list[str] = list({job.function for job in jobs})
     statistics = Statistics(

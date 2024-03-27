@@ -11,10 +11,10 @@ export class Job {
   id: string = "";
   status: string = "";
   success: boolean = false;
-  enqueue_time: string = "";
+  enqueue_time: Date = new Date(-8640000000000000);
   result: string = "";
-  start_time: string = "";
-  finish_time: string = "";
+  start_time: Date | null = null;
+  finish_time: Date | null = null;
   queue_name: string = "";
   execution_duration: number = 0;
   function: string = "";

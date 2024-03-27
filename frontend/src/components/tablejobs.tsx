@@ -22,6 +22,7 @@ import {
   IconChevronDown,
   IconChevronUp,
 } from "@tabler/icons-react";
+import { format } from "date-fns";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
@@ -104,14 +105,18 @@ export const TableJobs = observer(() => {
         className={classes.tr}
         onClick={() => rootStore.tableJobs.setToggleJob(job.id)}
       >
-        <Table.Td className={classes.td}>{job.enqueue_time}</Table.Td>
+        <Table.Td className={classes.td}>
+          {format(job.enqueue_time, "yyyy-MM-dd HH:mm:ss")}
+        </Table.Td>
         <Table.Td className={classes.td}>{job.id}</Table.Td>
         <Table.Td className={classes.td}>
           {StatusControl(job.status, job.success)}
         </Table.Td>
         <Table.Td className={classes.td}>{job.function}</Table.Td>
-        <Table.Td className={classes.td}>{job.start_time}</Table.Td>
-        <Table.Td className={classes.td}>{job.execution_duration}</Table.Td>
+        <Table.Td className={classes.td}>
+          {job.start_time && format(job.start_time, "yyyy-MM-dd HH:mm:ss")}
+        </Table.Td>
+        <Table.Td className={classes.td}>{job.execution_duration} </Table.Td>
       </Table.Tr>
       <Table.Tr className={classes.expander_tr} key={`"${job.id}1`}>
         <Table.Td colSpan={6}>
@@ -167,15 +172,23 @@ export const TableJobs = observer(() => {
                       </Table.Tr>
                       <Table.Tr>
                         <Table.Td>enqueue time</Table.Td>
-                        <Table.Td>{job.enqueue_time}</Table.Td>
+                        <Table.Td>
+                          {format(job.enqueue_time, "yyyy-MM-dd HH:mm:ss")}
+                        </Table.Td>
                       </Table.Tr>
                       <Table.Tr>
                         <Table.Td>start time</Table.Td>
-                        <Table.Td>{job.start_time}</Table.Td>
+                        <Table.Td>
+                          {job.start_time &&
+                            format(job.start_time, "yyyy-MM-dd HH:mm:ss")}
+                        </Table.Td>
                       </Table.Tr>
                       <Table.Tr>
                         <Table.Td>finish time</Table.Td>
-                        <Table.Td>{job.finish_time}</Table.Td>
+                        <Table.Td>
+                          {job.finish_time &&
+                            format(job.finish_time, "yyyy-MM-dd HH:mm:ss")}
+                        </Table.Td>
                       </Table.Tr>
                       <Table.Tr>
                         <Table.Td>execution duration (sec)</Table.Td>
@@ -243,7 +256,6 @@ export const TableJobs = observer(() => {
             overlayProps={{ radius: "sm", blur: 1 }}
           />
           <Table
-            striped
             highlightOnHover
             withTableBorder
             horizontalSpacing="md"
