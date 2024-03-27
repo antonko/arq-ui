@@ -3,7 +3,7 @@ name: Code Check on Push
 on:
   push:
     branches: [main]
-    
+
 jobs:
   frontend-check:
     runs-on: ubuntu-latest
@@ -68,7 +68,7 @@ jobs:
         working-directory: ./frontend
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile --production
+        run: yarn install
         working-directory: ./frontend
 
       - name: Run build
@@ -88,4 +88,4 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./backend  
-        run: pdm install --no-dev
+        run: pdm install
