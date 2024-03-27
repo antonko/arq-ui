@@ -17,6 +17,9 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install Yarn 2
         run: yarn set version berry
         working-directory: ./frontend
