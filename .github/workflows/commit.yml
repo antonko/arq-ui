@@ -17,6 +17,10 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install Yarn 2
+        run: yarn set version berry
+        working-directory: ./frontend
+
       - name: Install dependencies
         run: yarn install
         working-directory: ./frontend
@@ -31,13 +35,17 @@ jobs:
 
   backend-check:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup PDM
         uses: pdm-project/setup-pdm@v4
+
       - name: Install dependencies
         working-directory: ./backend  
         run: pdm install --dev
+
       - name: Run linter
         working-directory: ./backend
         run: pdm run ruff .
