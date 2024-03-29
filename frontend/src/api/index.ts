@@ -1,8 +1,12 @@
 import { IFetchJobsParams, IJob, IJobsInfo } from "./types";
 
 function joinPathsSafely(basePath: string, relativePath: string): string {
-  const trimmedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
-  const trimmedRelativePath = relativePath.startsWith('/') ? relativePath.slice(1) : relativePath;
+  const trimmedBasePath = basePath.endsWith("/")
+    ? basePath.slice(0, -1)
+    : basePath;
+  const trimmedRelativePath = relativePath.startsWith("/")
+    ? relativePath.slice(1)
+    : relativePath;
   return `${trimmedBasePath}/${trimmedRelativePath}`;
 }
 
@@ -10,7 +14,6 @@ function joinPathsSafely(basePath: string, relativePath: string): string {
  * Fetches jobs from the API based on the specified parameters.
  */
 export function fetchJobs(params: IFetchJobsParams = {}): Promise<IJobsInfo> {
-  
   const jobsUrl = joinPathsSafely(import.meta.env.VITE_API_HOST, "jobs");
 
   const queryParams = new URLSearchParams();

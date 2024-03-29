@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     """Configuration settings for the application."""
-    
+
     debug: bool = False
 
     root_path: str = "/arq"
@@ -16,14 +16,13 @@ class Settings(BaseSettings):
     api_prefix: str = "api"
 
     environment: str = "production"
-    
+
     title: str = "Arq UI API"
     version: str = "0.1.0"
     summary: str = "Interface for Arq background jobs."
     description: str = ""
 
     cors_allowed_hosts: list[str] | None = ["http://localhost:5173"]
-    
 
     timezone: str = "UTC"
 

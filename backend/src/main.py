@@ -1,7 +1,4 @@
 import logging
-from urllib.parse import urljoin
-
-from fastapi.staticfiles import StaticFiles
 
 from core.config import Settings, get_app_settings
 from core.exception_handler import (
@@ -15,6 +12,7 @@ from endpoints.api import routers
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 logger = logging.getLogger(__name__)
@@ -29,7 +27,7 @@ def get_application() -> FastAPI:
         title=settings.title,
         version=settings.version,
         description=settings.description,
-        redoc_url= join_paths_safely(settings.root_path, settings.redoc_url),
+        redoc_url=join_paths_safely(settings.root_path, settings.redoc_url),
         docs_url=join_paths_safely(settings.root_path, settings.docs_url),
         openapi_url=join_paths_safely(settings.root_path, settings.openapi_url),
         summary=settings.summary,
@@ -44,14 +42,21 @@ def get_application() -> FastAPI:
             allow_headers=["*"],
         )
 
-    application.include_router(routers, prefix=join_paths_safely(settings.root_path, settings.api_prefix))
+    application.include_router(
+        routers,
+        prefix=join_paths_safely(settings.root_path, settings.api_prefix),
+    )
 
     application.add_exception_handler(RequestValidationError, custom_validation_exception_handler)  # type: ignore
     application.add_exception_handler(HTTPException, http_exception_handler)  # type: ignore
     application.add_exception_handler(Exception, all_exception_handler)  # type: ignore
     application.add_exception_handler(StarletteHTTPException, starlette_http_exception_handler)  # type: ignore
 
-    application.mount(join_paths_safely(settings.root_path, "ui"), StaticFiles(directory="static", html=True), name="static")
+    application.mount(
+        join_paths_safely(settings.root_path, "ui"),
+        StaticFiles(directory="static", html=True),
+        name="static",
+    )
 
     return application
 
