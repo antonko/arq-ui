@@ -17,7 +17,7 @@ import Footer from "./components/footer";
 import Header from "./components/header";
 import { Statistics } from "./components/statistics";
 import { TableJobs } from "./components/tablejobs";
-import TimeLine from "./components/timeline";
+import { TimeLine } from "./components/timeline";
 import { rootStore } from "./stores";
 
 function App() {

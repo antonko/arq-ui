@@ -4,7 +4,14 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { abortJob, fetchJob, fetchJobs } from "../api";
 import { IFetchJobsParams, IJobsInfo } from "../api/types";
 
-import { AbortStatus, FilterJobs, Job, PagedJobs, Statistics } from "./models";
+import {
+  AbortStatus,
+  FilterJobs,
+  Job,
+  JobsTimeStatistics,
+  PagedJobs,
+  Statistics,
+} from "./models";
 
 export class RootStore {
   tableJobs: PagedJobs = new PagedJobs();
@@ -12,6 +19,7 @@ export class RootStore {
   filterJobs: FilterJobs = new FilterJobs();
   functions: string[] = [];
   statistics: Statistics = new Statistics();
+  statistics_hourly: JobsTimeStatistics[] = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -44,6 +52,7 @@ export class RootStore {
         this.tableJobs.limit = jobsData.paged_jobs.limit;
         this.functions = jobsData.functions;
         this.statistics = jobsData.statistics;
+        this.statistics_hourly = jobsData.statistics_hourly;
       });
     } catch (error) {
       console.error("Failed to load data", error);
@@ -53,6 +62,7 @@ export class RootStore {
         title: "Failed to load data",
         message: String(message),
         color: "red",
+        autoClose: false,
       });
     } finally {
       this.isLoading = false;
@@ -85,6 +95,7 @@ export class RootStore {
         title: "Failed to abort job",
         message: String(message),
         color: "red",
+        autoClose: false,
       });
     }
   }

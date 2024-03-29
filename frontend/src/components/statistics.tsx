@@ -22,7 +22,7 @@ const Card = ({
   description: string;
   icon: React.ReactNode;
 }) => (
-  <Paper withBorder p="md" radius="md">
+  <Paper withBorder p="md" radius="md" shadow="sm">
     <Group justify="space-between">
       <Text size="xs" c="dimmed" className={classes.title}>
         {title}

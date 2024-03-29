@@ -255,57 +255,62 @@ export const TableJobs = observer(() => {
             zIndex={200}
             overlayProps={{ radius: "sm", blur: 1 }}
           />
-          <Table
-            highlightOnHover
-            withTableBorder
-            horizontalSpacing="md"
-            verticalSpacing="lg"
-            layout="fixed"
-          >
-            <Table.Tbody>
-              <Table.Tr>
-                <Th
-                  onSort={() => rootStore.setSortBy("enqueue_time")}
-                  key="enqueue_time"
-                  name="enqueue_time"
-                >
-                  Enqueue time
-                </Th>
-                <Th onSort={() => rootStore.setSortBy("id")} key="id" name="id">
-                  ID
-                </Th>
-                <Th
-                  onSort={() => rootStore.setSortBy("status")}
-                  key="status"
-                  name="status"
-                >
-                  Status
-                </Th>
-                <Th
-                  onSort={() => rootStore.setSortBy("function")}
-                  key="functio"
-                  name="function"
-                >
-                  Function
-                </Th>
-                <Th
-                  onSort={() => rootStore.setSortBy("start_time")}
-                  key="start_time"
-                  name="start_time"
-                >
-                  Start Time
-                </Th>
-                <Th
-                  onSort={() => rootStore.setSortBy("execution_duration")}
-                  key="duration"
-                  name="execution_duration"
-                >
-                  Duration
-                </Th>
-              </Table.Tr>
-            </Table.Tbody>
-            <Table.Tbody>{rows}</Table.Tbody>
-          </Table>
+          <Paper withBorder p="md" radius="md">
+            <Table
+              highlightOnHover
+              horizontalSpacing="md"
+              verticalSpacing="lg"
+              layout="fixed"
+            >
+              <Table.Tbody>
+                <Table.Tr>
+                  <Th
+                    onSort={() => rootStore.setSortBy("enqueue_time")}
+                    key="enqueue_time"
+                    name="enqueue_time"
+                  >
+                    Enqueue time
+                  </Th>
+                  <Th
+                    onSort={() => rootStore.setSortBy("id")}
+                    key="id"
+                    name="id"
+                  >
+                    ID
+                  </Th>
+                  <Th
+                    onSort={() => rootStore.setSortBy("status")}
+                    key="status"
+                    name="status"
+                  >
+                    Status
+                  </Th>
+                  <Th
+                    onSort={() => rootStore.setSortBy("function")}
+                    key="functio"
+                    name="function"
+                  >
+                    Function
+                  </Th>
+                  <Th
+                    onSort={() => rootStore.setSortBy("start_time")}
+                    key="start_time"
+                    name="start_time"
+                  >
+                    Start Time
+                  </Th>
+                  <Th
+                    onSort={() => rootStore.setSortBy("execution_duration")}
+                    key="duration"
+                    name="execution_duration"
+                  >
+                    Duration
+                  </Th>
+                </Table.Tr>
+              </Table.Tbody>
+              <Table.Tbody>{rows}</Table.Tbody>
+            </Table>
+          </Paper>
         </Box>
       </ScrollArea>
       <Space h="md" />

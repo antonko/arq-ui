@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from datetime import UTC, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import arq
@@ -10,7 +11,7 @@ from arq.connections import RedisSettings
 from arq.jobs import Job as ArqJob
 from core.cache import LRUCache
 from core.config import Settings, get_app_settings
-from schemas.job import Job
+from schemas.job import ColorStatistics, Job, JobStatus, JobsTimeStatistics
 
 settings: Settings = get_app_settings()
 
@@ -114,7 +115,14 @@ class JobService:
         tasks = [self.fetch_job_info(semaphore, redis, key_id) for key_id in processed_keys]
         jobs_task = await asyncio.gather(*tasks)
         jobs: list[Job] = [job for job in jobs_task if job is not None]
-        return jobs
+
+        twenty_four_hours_ago = datetime.now(UTC) - timedelta(hours=1)
+        return [
+            job
+            for job in jobs
+            if job.enqueue_time >= twenty_four_hours_ago
+            or (job.start_time and job.start_time >= twenty_four_hours_ago)
+        ]
 
     async def get_job_by_id(self, job_id: str) -> Job | None:
         """Get job by id."""
@@ -131,3 +139,67 @@ class JobService:
         redis = await create_pool(self.redis_settings)
         job: ArqJob = ArqJob(job_id, redis)
         return await job.abort()
+
+    def adjust_color_intensity(self, color_intensity: float) -> float:
+        """Adjust color intensity."""
+        if color_intensity < 0.4:
+            return 0.3
+        elif color_intensity < 0.6:
+            return 0.5
+        elif color_intensity < 0.8:
+            return 0.7
+        else:
+            return 1.0
+
+    def generate_statistics(self, jobs_list: list[Job]) -> list[JobsTimeStatistics]:
+        """Generate statistics for jobs."""
+        max_time_diff = 60
+
+        one_hour_ago = datetime.now(UTC).replace(second=0, microsecond=0) - timedelta(hours=1)
+        current_minute = (datetime.now(UTC) - one_hour_ago).total_seconds() // 60
+
+        statistics = [
+            JobsTimeStatistics(date=(one_hour_ago + timedelta(minutes=i)))
+            for i in range(max_time_diff)
+        ]
+        for job in jobs_list:
+            created_diff = (job.enqueue_time - one_hour_ago).total_seconds() // 60
+            if 0 <= created_diff < max_time_diff:
+                statistics[int(created_diff)].total_created += 1
+
+            if job.status == JobStatus.in_progress and job.start_time:
+                start_diff = int((job.start_time - one_hour_ago).total_seconds() // 60)
+                for i in range(start_diff, min(int(current_minute) + 1, max_time_diff)):
+                    statistics[i].total_in_progress += 1
+
+            if job.status == JobStatus.complete and job.start_time and job.finish_time:
+                start_diff = int((job.start_time - one_hour_ago).total_seconds() // 60)
+                finish_diff = int((job.finish_time - one_hour_ago).total_seconds() // 60)
+                for i in range(start_diff, min(finish_diff + 1, max_time_diff)):
+                    statistics[i].total_in_progress += 1
+                if finish_diff < max_time_diff:
+                    if job.success:
+                        statistics[finish_diff].total_completed_successfully += 1
+                    else:
+                        statistics[finish_diff].total_failed += 1
+
+        max_jobs = max(
+            stat.total_completed_successfully + stat.total_in_progress for stat in statistics
+        )
+
+        for stat in statistics:
+            current_jobs = stat.total_completed_successfully + stat.total_in_progress
+            color_intensity = round(current_jobs / max_jobs, 1) if max_jobs > 0 else 1.0
+            stat.color_intensity = self.adjust_color_intensity(color_intensity)
+
+            if stat.total_completed_successfully == 0 and stat.total_failed == 0:
+                stat.color = ColorStatistics.gray
+                stat.color_intensity = 1
+            elif stat.total_failed == 0 and stat.total_completed_successfully > 0:
+                stat.color = ColorStatistics.green
+            elif stat.total_completed_successfully == 0 and stat.total_failed > 0:
+                stat.color = ColorStatistics.red
+            else:
+                stat.color = ColorStatistics.orange
+
+        return statistics

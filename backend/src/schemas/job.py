@@ -19,6 +19,60 @@ class JobStatus(str, Enum):
     not_found = "not_found"
 
 
+class ColorStatistics(str, Enum):
+    """Represents a color."""
+
+    red = "red"
+    green = "green"
+    gray = "gray"
+    orange = "orange"
+
+
+class JobsTimeStatistics(BaseModel):
+    """Represents statistics for jobs over a period of time."""
+
+    date: datetime = Field(
+        default=...,
+        description="Date and time for the statistics",
+        examples=["2024-03-24T17:32:30.587000+00:00"],
+    )
+
+    total_created: int = Field(
+        default=0,
+        description="Total number of jobs created",
+        examples=[100],
+    )
+
+    total_completed_successfully: int = Field(
+        default=0,
+        description="Total number of jobs completed successfully",
+        examples=[100],
+    )
+
+    total_failed: int = Field(
+        default=0,
+        description="Total number of jobs failed",
+        examples=[100],
+    )
+    total_in_progress: int = Field(
+        default=0,
+        description="Total number of jobs in progress",
+        examples=[100],
+    )
+
+    color: ColorStatistics = Field(
+        default=ColorStatistics.gray,
+        description="Color for the statistics",
+        examples=["red"],
+    )
+
+    color_intensity: float = Field(
+        default=1.0,
+        description="Color intensity for the statistics",
+        examples=[1.0],
+    )
+
+
 class Job(BaseModel):
     """Represents a job."""
 
@@ -150,6 +204,11 @@ class JobsInfo(BaseModel):
     paged_jobs: Paged[Job] | None = Field(
         default_factory=None,
         description="Paged response containing a list of jobs",
+    )
+
+    statistics_hourly: list[JobsTimeStatistics] = Field(
+        default_factory=list,
+        description="List of time statistics for jobs",
     )
 
 

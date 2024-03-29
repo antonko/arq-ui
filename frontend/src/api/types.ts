@@ -44,6 +44,7 @@ export interface IJobsInfo {
   paged_jobs: IPagedJobs;
   functions: string[];
   statistics: IStatistics;
+  statistics_hourly: IJobsTimeStatistics[];
 }
 
 export interface IDetailItem {
@@ -56,4 +57,21 @@ export interface IProblemDetail {
   text?: string;
   status: number;
   detail?: IDetailItem[];
+}
+
+export enum ColorStatistics {
+  red = "red",
+  green = "green",
+  gray = "gray",
+  orange = "orange",
+}
+
+export interface IJobsTimeStatistics {
+  date: Date;
+  total_created: number;
+  total_completed_successfully: number;
+  total_failed: number;
+  total_in_progress: number;
+  color: ColorStatistics;
+  color_intensity: number;
 }

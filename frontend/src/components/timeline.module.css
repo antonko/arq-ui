@@ -9,9 +9,8 @@
   height: 50px;
   margin: 0 1px;
   border-radius: 2px;
-  background-color: #028d63;
+  background-color: gray;
   transition: background-color 0.4s;
-  cursor: pointer;
 }
 
 .selected {

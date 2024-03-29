@@ -1,11 +1,19 @@
 import logging
-from datetime import UTC, datetime, timedelta
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from core.config import Settings, get_app_settings
 from core.depends import get_lru_cache, get_redis_settings
 from fastapi import APIRouter, HTTPException, Query
-from schemas.job import Job, JobsInfo, JobSortBy, JobSortOrder, JobStatus, Statistics
+from schemas.job import (
+    Job,
+    JobsInfo,
+    JobSortBy,
+    JobSortOrder,
+    JobStatus,
+    JobsTimeStatistics,
+    Statistics,
+)
 from schemas.paged import Paged
 from schemas.problem import ProblemDetail
 from services.job_service import JobService
@@ -73,21 +81,11 @@ async def get_all(
     job_service = JobService(
         get_redis_settings(),
         get_lru_cache(),
-        settings.request_semaphore_jobs,
     )
     # We retrieve all tasks because we cannot initially filter them directly in Redis.
     # Subsequently, we filter them at the application level.
     # This code is simple, so we don't separate it out.
     jobs = await job_service.get_all_jobs(settings.max_jobs)
-
-    # Filter the jobs
-    twenty_four_hours_ago = datetime.now(UTC) - timedelta(hours=24)
-    jobs = [
-        job
-        for job in jobs
-        if job.enqueue_time >= twenty_four_hours_ago
-        or (job.start_time and job.start_time >= twenty_four_hours_ago)
-    ]
 
     functions: list[str] = list({job.function for job in jobs})
     statistics = Statistics(
@@ -95,8 +93,12 @@ async def get_all(
         in_progress=len([job for job in jobs if job.status == JobStatus.in_progress]),
         completed=len([job for job in jobs if job.status == JobStatus.complete]),
         queued=len([job for job in jobs if job.status == JobStatus.queued]),
-        failed=len([job for job in jobs if job.success is False]),
+        failed=len(
+            [job for job in jobs if job.status == JobStatus.complete and job.success is False],
+        ),
     )
+
+    time_statistic: list[JobsTimeStatistics] = job_service.generate_statistics(jobs)
 
     if start_time:
         start_time = start_time.replace(tzinfo=ZoneInfo(settings.timezone))
@@ -142,6 +144,7 @@ async def get_all(
     return JobsInfo(
         functions=functions,
         statistics=statistics,
+        statistics_hourly=time_statistic,
         paged_jobs=Paged[Job](
             items=paging_jobs,
             count=len(jobs),
@@ -170,7 +173,6 @@ async def get_job_by_id(job_id: str) -> Job:
     job_service = JobService(
         get_redis_settings(),
         get_lru_cache(),
-        settings.request_semaphore_jobs,
     )
     job = await job_service.get_job_by_id(job_id)
     if not job:
@@ -198,7 +200,6 @@ async def abort_job(job_id: str) -> None:
     job_service = JobService(
         get_redis_settings(),
         get_lru_cache(),
-        settings.request_semaphore_jobs,
     )
     result: bool = await job_service.abort_job(job_id)
     if not result:
@@ -206,3 +207,27 @@ async def abort_job(job_id: str) -> None:
             status_code=400,
             detail=f"Failed to abort the job with id {job_id}.",
         )
+
+
+@router.get(
+    "/statistics/hourly",
+    summary="Get hourly statistics",
+    response_model=list[JobsTimeStatistics],
+    responses={
+        200: {
+            "model": list[JobsTimeStatistics],
+            "description": "Hourly statistics successfully retrieved.",
+        },
+        422: {"description": "Data validation error.", "model": ProblemDetail},
+        500: {"description": "Internal server error.", "model": ProblemDetail},
+    },
+)
+async def get_hourly_statistics() -> list[JobsTimeStatistics]:
+    """Get hourly statistics."""
+    job_service = JobService(
+        get_redis_settings(),
+        get_lru_cache(),
+    )
+    jobs = await job_service.get_all_jobs(settings.max_jobs)
+
+    return job_service.generate_statistics(jobs)

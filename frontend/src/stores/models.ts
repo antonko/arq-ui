@@ -4,7 +4,7 @@ export enum AbortStatus {
   NotStarted = "not_started",
   InProgress = "in_progress",
   Completed = "completed",
-  Failed = "failed", // Если нужно отслеживать неудачные попытки отмены
+  Failed = "failed",
 }
 
 export class Job {
@@ -60,6 +60,7 @@ export class PagedJobs {
 export class JobsInfo {
   functions: string[] = [];
   statistics: Statistics = new Statistics();
+  statistics_hourly: JobsTimeStatistics[] = [];
   paged_jobs: PagedJobs = new PagedJobs();
 
   constructor() {
@@ -83,6 +84,27 @@ export class Statistics {
   in_progress: number = 0;
   queued: number = 0;
   failed: number = 0;
+
+  constructor() {
+    makeAutoObservable(this);
+  }
+}
+
+export enum ColorStatistics {
+  red = "red",
+  orange = "orange",
+  green = "green",
+  gray = "gray",
+}
+
+export class JobsTimeStatistics {
+  date: Date = new Date();
+  total_created: number = 0;
+  total_completed_successfully: number = 0;
+  total_failed: number = 0;
+  total_in_progress: number = 0;
+  color: ColorStatistics = ColorStatistics.gray;
+  color_intensity: number = 0;
 
   constructor() {
     makeAutoObservable(this);
