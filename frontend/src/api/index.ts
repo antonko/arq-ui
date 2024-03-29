@@ -1,10 +1,17 @@
 import { IFetchJobsParams, IJob, IJobsInfo } from "./types";
 
+function joinPathsSafely(basePath: string, relativePath: string): string {
+  const trimmedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+  const trimmedRelativePath = relativePath.startsWith('/') ? relativePath.slice(1) : relativePath;
+  return `${trimmedBasePath}/${trimmedRelativePath}`;
+}
+
 /**
  * Fetches jobs from the API based on the specified parameters.
  */
 export function fetchJobs(params: IFetchJobsParams = {}): Promise<IJobsInfo> {
-  const jobsUrl = new URL("jobs", import.meta.env.VITE_API_HOST).toString();
+  
+  const jobsUrl = joinPathsSafely(import.meta.env.VITE_API_HOST, "jobs");
 
   const queryParams = new URLSearchParams();
 
@@ -40,7 +47,7 @@ export function fetchJobs(params: IFetchJobsParams = {}): Promise<IJobsInfo> {
 }
 
 export function abortJob(jobId: string): Promise<void> {
-  const jobsUrl = new URL("jobs", import.meta.env.VITE_API_HOST).toString();
+  const jobsUrl = joinPathsSafely(import.meta.env.VITE_API_HOST, "jobs");
   const url = `${jobsUrl}/${jobId}`;
 
   return fetch(url, { method: "DELETE" }).then(async (response) => {
@@ -52,7 +59,7 @@ export function abortJob(jobId: string): Promise<void> {
 }
 
 export function fetchJob(jobId: string): Promise<IJob> {
-  const jobsUrl = new URL("jobs", import.meta.env.VITE_API_HOST).toString();
+  const jobsUrl = joinPathsSafely(import.meta.env.VITE_API_HOST, "jobs");
   const url = `${jobsUrl}/${jobId}`;
 
   return fetch(url).then(async (response) => {

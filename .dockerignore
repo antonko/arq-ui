@@ -1,1 +1,3 @@
-src/.pdm-python
+**/.pdm-python
+**/node_modules
+**/.venv

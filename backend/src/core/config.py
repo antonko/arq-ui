@@ -6,19 +6,24 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     """Configuration settings for the application."""
-
+    
     debug: bool = False
+
+    root_path: str = "/arq"
+    docs_url: str = "api/docs"
+    openapi_url: str = "api/openapi.json"
+    redoc_url: str = "api/redoc"
+    api_prefix: str = "api"
+
     environment: str = "production"
-    docs_url: str = "/arq/api/docs"
-    openapi_url: str = "/arq/api/openapi.json"
-    redoc_url: str = "/arq/api/redoc"
+    
     title: str = "Arq UI API"
     version: str = "0.1.0"
     summary: str = "Interface for Arq background jobs."
     description: str = ""
 
     cors_allowed_hosts: list[str] | None = ["http://localhost:5173"]
-    api_prefix: str = "/arq/api"
+    
 
     timezone: str = "UTC"
 
