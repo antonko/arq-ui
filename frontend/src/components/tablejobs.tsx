@@ -212,27 +212,51 @@ export const TableJobs = observer(() => {
                   )}
                   args:
                   <Code block mt={10} mah={200}>
-                    {job.args}
+                    {(() => {
+                      try {
+                        return JSON.stringify(
+                          typeof job.args === "string"
+                            ? JSON.parse(job.args)
+                            : job.args,
+                          null,
+                          2,
+                        );
+                      } catch (e) {
+                        return job.args.toString();
+                      }
+                    })()}
                   </Code>
                   <br />
                   kwargs:
                   <Code block mt={10} mah={200}>
                     {(() => {
                       try {
-                        return JSON.stringify(JSON.parse(job.kwargs), null, 2);
+                        return JSON.stringify(
+                          typeof job.kwargs === "string"
+                            ? JSON.parse(job.kwargs)
+                            : job.kwargs,
+                          null,
+                          2,
+                        );
                       } catch (e) {
-                        return job.kwargs;
+                        return job.kwargs.toString();
                       }
                     })()}
                   </Code>
                   <br />
                   result:
-                  <Code block mt={10} mah={500}>
+                  <Code block mt={10} mah={200}>
                     {(() => {
                       try {
-                        return JSON.stringify(JSON.parse(job.result), null, 2);
+                        return JSON.stringify(
+                          typeof job.result === "string"
+                            ? JSON.parse(job.result)
+                            : job.result,
+                          null,
+                          2,
+                        );
                       } catch (e) {
-                        return job.result;
+                        return job.result.toString();
                       }
                     })()}
                   </Code>

@@ -1,5 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
+from typing import Any
 from zoneinfo import ZoneInfo
 
 from core.config import Settings, get_app_settings
@@ -127,7 +128,7 @@ class Job(BaseModel):
         examples=["download_content"],
     )
 
-    args: list[str] | None = Field(
+    args: list[Any] | None = Field(
         default=None,
         description="Arguments passed to the function that was executed by the job",
         examples=[["https://florm.io"]],
@@ -143,6 +144,37 @@ class Job(BaseModel):
         default=None,
         description="Number of times the job was tried",
         examples=[1],
+    )
+
+    class Config:
+        """Pydantic model configuration."""
+
+        json_encoders = {
+            datetime: lambda v: v.astimezone(ZoneInfo(settings.timezone)).isoformat(),
+        }
+
+
+class JobCreate(BaseModel):
+    """Represents a job creation request."""
+
+    function: str = Field(..., description="Name of the function to execute")
+    args: list[Any] = Field(
+        default_factory=list,
+        description="Positional arguments of the function",
+    )
+    job_id: str | None = Field(None, description="Job identifier")
+    queue_name: str | None = Field(None, description="Name of the queue")
+    defer_until: datetime | None = Field(
+        None,
+        description="Postpone execution until the specified date/time",
+    )
+    expires: timedelta | None = Field(
+        None,
+        description="Set the expiration time for the job",
+    )
+    kwargs: dict[str, Any] = Field(
+        default_factory=dict,
+        description="Named arguments of the function",
     )
 
     class Config:

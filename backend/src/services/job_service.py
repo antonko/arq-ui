@@ -11,7 +11,7 @@ from arq.connections import RedisSettings
 from arq.jobs import Job as ArqJob
 from core.cache import LRUCache
 from core.config import Settings, get_app_settings
-from schemas.job import ColorStatistics, Job, JobStatus, JobsTimeStatistics
+from schemas.job import ColorStatistics, Job, JobCreate, JobStatus, JobsTimeStatistics
 
 settings: Settings = get_app_settings()
 
@@ -142,14 +142,14 @@ class JobService:
 
     def adjust_color_intensity(self, color_intensity: float) -> float:
         """Adjust color intensity."""
-        if color_intensity < 0.4:
+        if color_intensity < 0.4:  # noqa: PLR2004
             return 0.3
-        elif color_intensity < 0.6:
+        if color_intensity < 0.6:  # noqa: PLR2004
             return 0.5
-        elif color_intensity < 0.8:
+        if color_intensity < 0.8:  # noqa: PLR2004
             return 0.7
-        else:
-            return 1.0
+
+        return 1.0
 
     def generate_statistics(self, jobs_list: list[Job]) -> list[JobsTimeStatistics]:
         """Generate statistics for jobs."""
@@ -203,3 +203,18 @@ class JobService:
                 stat.color = ColorStatistics.orange
 
         return statistics
+
+    async def create_job(self, new_job: JobCreate) -> Job | None:
+        """Create a new job."""
+        redis = await create_pool(self.redis_settings)
+        await redis.enqueue_job(
+            new_job.function,
+            *new_job.args,
+            _job_id=new_job.job_id,
+            _queue_name=new_job.queue_name,
+            _defer_until=new_job.defer_until,
+            _expires=new_job.expires,
+            **new_job.kwargs,
+        )
+
+        return None

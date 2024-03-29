@@ -7,6 +7,7 @@ from core.depends import get_lru_cache, get_redis_settings
 from fastapi import APIRouter, HTTPException, Query
 from schemas.job import (
     Job,
+    JobCreate,
     JobsInfo,
     JobSortBy,
     JobSortOrder,
@@ -231,3 +232,31 @@ async def get_hourly_statistics() -> list[JobsTimeStatistics]:
     jobs = await job_service.get_all_jobs(settings.max_jobs)
 
     return job_service.generate_statistics(jobs)
+
+
+@router.post(
+    "",
+    summary="Create job",
+    response_model=Job,
+    responses={
+        201: {
+            "model": Job,
+            "description": "Job successfully created.",
+        },
+        422: {"description": "Data validation error.", "model": ProblemDetail},
+        500: {"description": "Internal server error.", "model": ProblemDetail},
+    },
+)
+async def create_job(new_job: JobCreate) -> Job:
+    """Create job."""
+    job_service = JobService(
+        get_redis_settings(),
+        get_lru_cache(),
+    )
+    job = await job_service.create_job(new_job)
+    if not job:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to create a job.",
+        )
+    return job
