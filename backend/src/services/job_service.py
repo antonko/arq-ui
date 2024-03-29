@@ -151,8 +151,9 @@ class JobService:
 
         return 1.0
 
-    def generate_statistics(self, jobs_list: list[Job]) -> list[JobsTimeStatistics]:
+    def generate_statistics(self, jobs_list: list[Job]) -> list[JobsTimeStatistics]:  # noqa: PLR0912, C901
         """Generate statistics for jobs."""
+        # TODO: This function is too complex. It should be refactored.
         max_time_diff = 60
 
         one_hour_ago = datetime.now(UTC).replace(second=0, microsecond=0) - timedelta(hours=1)
