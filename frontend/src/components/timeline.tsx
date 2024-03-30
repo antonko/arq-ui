@@ -42,19 +42,19 @@ export const TimeLine = observer(() => {
           <Divider size={1} />
           <Group p={0} m={0} justify="space-between">
             <Text>Total created:</Text>
-            <Text>1</Text>
+            <Text>{item.total_created}</Text>
           </Group>
           <Group justify="space-between">
             <Text>Total completed:</Text>
-            <Text>3</Text>
+            <Text>{item.total_completed_successfully}</Text>
           </Group>
           <Group justify="space-between">
             <Text>Total failed:</Text>
-            <Text>1</Text>
+            <Text>{item.total_failed}</Text>
           </Group>
           <Group justify="space-between">
             <Text>Total in progress:</Text>
-            <Text>11</Text>
+            <Text>{item.total_in_progress}</Text>
           </Group>
         </Stack>
       </HoverCard.Dropdown>
