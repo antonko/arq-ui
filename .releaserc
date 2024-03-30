@@ -20,7 +20,7 @@
     [
       "@semantic-release-plus/docker",
       {
-        "name": "antonk0/arq-ui-test"
+        "name": "antonk0/arq-ui"
       }
     ]
   ]
