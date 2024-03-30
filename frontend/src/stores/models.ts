@@ -69,7 +69,7 @@ export class JobsInfo {
 }
 
 export class FilterJobs {
-  function: string[] = [];
+  function: string = "";
   status: string[] = [];
   search: string = "";
 

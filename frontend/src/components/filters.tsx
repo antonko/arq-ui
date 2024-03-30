@@ -3,6 +3,7 @@ import {
   CloseButton,
   Grid,
   MultiSelect,
+  Select,
   TextInput,
   rem,
 } from "@mantine/core";
@@ -15,10 +16,10 @@ export const Filters = observer(() => {
   return (
     <Grid>
       <Grid.Col span="auto">
-        <MultiSelect
+        <Select
+          multiple={false}
           placeholder="Function"
           data={[...rootStore.functions]}
-          defaultValue={[]}
           value={rootStore.filterJobs.function}
           onChange={(value) => {
             rootStore.setFilterFunction(value);

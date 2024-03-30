@@ -42,6 +42,11 @@ export class RootStore {
     if (this.filterJobs.search) {
       params.search = this.filterJobs.search;
     }
+
+    if (this.filterJobs.function.length) {
+      params.functionName = this.filterJobs.function;
+    }
+
     try {
       const jobsData: IJobsInfo = await fetchJobs(params);
       runInAction(() => {
@@ -131,8 +136,8 @@ export class RootStore {
     return Math.ceil(this.tableJobs.offset / this.tableJobs.limit) + 1;
   }
 
-  setFilterFunction(value: string[]) {
-    this.filterJobs.function = value;
+  setFilterFunction(value: string | null) {
+    this.filterJobs.function = value || "";
     this.loadData();
   }
 
