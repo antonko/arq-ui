@@ -62,7 +62,11 @@ class JobService:
             if status == arq.jobs.JobStatus.complete:
                 complete_key: str = arq.constants.result_key_prefix + key_id_without_prefix
                 redis_raw = await redis.get(complete_key)
-                job_result: arq.jobs.JobResult = arq.jobs.deserialize_result(redis_raw)
+                try:
+                    job_result: arq.jobs.JobResult = arq.jobs.deserialize_result(redis_raw)
+                except Exception as e:
+                    self.logger.error(f"Error deserializing job result: {e}")
+                    return None
 
                 job_schema = Job(
                     id=key_id_without_prefix,
