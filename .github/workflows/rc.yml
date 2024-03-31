@@ -2,7 +2,7 @@ name: Code Check on Release
 
 on:
   push:
-    branches: [main]
+    branches: [rc]
 
 jobs:
   frontend-check:
