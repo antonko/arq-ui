@@ -2,7 +2,7 @@ name: Code Check on Push
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, rc]
 
 jobs:
   docker-build:
