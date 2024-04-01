@@ -57,7 +57,7 @@ class JobService:
                 "",
             )
 
-            arq_job = ArqJob(key_id_without_prefix, redis)
+            arq_job = ArqJob(key_id_without_prefix, redis, _queue_name=settings.queue_name)
             status = await arq_job.status()
 
             if status == arq.jobs.JobStatus.complete:
@@ -142,7 +142,7 @@ class JobService:
     async def abort_job(self, job_id: str) -> bool:
         """Abort job."""
         redis = await create_pool(self.redis_settings)
-        job: ArqJob = ArqJob(job_id, redis)
+        job: ArqJob = ArqJob(job_id, redis, _queue_name=settings.queue_name)
         return await job.abort()
 
     def adjust_color_intensity(self, color_intensity: float) -> float:

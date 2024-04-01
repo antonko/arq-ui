@@ -36,6 +36,7 @@ class Settings(BaseSettings):
 
     max_jobs: int = 50000
     request_semaphore_jobs: int = 5
+    queue_name: str = "arq:queue"
 
     model_config = SettingsConfigDict(env_file=os.getenv("ENV_FILE", ".env"))
 
