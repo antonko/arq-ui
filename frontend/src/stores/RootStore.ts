@@ -43,7 +43,7 @@ export class RootStore {
       params.search = this.filterJobs.search;
     }
 
-    if (this.filterJobs.function.length) {
+    if (this.filterJobs.function) {
       params.functionName = this.filterJobs.function;
     }
 
@@ -106,8 +106,12 @@ export class RootStore {
   }
 
   clearFilter() {
-    this.filterJobs = new FilterJobs();
+    this.filterJobs.function = null;
+    this.filterJobs.status = [];
+    this.filterJobs.search = "";
     this.tableJobs.offset = 0;
+    this.tableJobs.sort_by = "enqueue_time";
+    this.tableJobs.sort_order = "desc";
     this.loadData();
   }
 
@@ -137,7 +141,7 @@ export class RootStore {
   }
 
   setFilterFunction(value: string | null) {
-    this.filterJobs.function = value || "";
+    this.filterJobs.function = value;
     this.loadData();
   }
 
