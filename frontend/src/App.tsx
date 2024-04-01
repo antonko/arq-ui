@@ -38,9 +38,7 @@ function App() {
             <Space h="xl" />
             <Container size="xl">
               <Stack gap="xl">
-                <Space h="xs" />
                 <Statistics />
-                <Space h="xs" />
                 <TimeLine />
                 <Filters />
                 <TableJobs />
