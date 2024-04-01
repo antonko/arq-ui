@@ -82,7 +82,7 @@ class JobService:
                     start_time=job_result.start_time.replace(tzinfo=ZoneInfo(settings.timezone)),
                     finish_time=job_result.finish_time.replace(tzinfo=ZoneInfo(settings.timezone)),
                     queue_name=job_result.queue_name,
-                    execution_duration=int(
+                    execution_duration=float(
                         (job_result.finish_time - job_result.start_time).total_seconds(),
                     ),
                 )
