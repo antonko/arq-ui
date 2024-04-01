@@ -1,3 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=lf
 *.js linguist-detect=false
+.vscode/*.json linguist-language=JSON-with-Comments
+*.cjs linguist-vendored
