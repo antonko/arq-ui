@@ -64,12 +64,12 @@ async def pattern_peak(redis_pool: ArqRedis, max_tasks_per_minute: int):
 
 async def pattern_random_distribution(redis_pool: ArqRedis, max_tasks_per_minute: int):
     total_minutes = 10    
-    for _ in range(total_minutes):
+    for minute in range(total_minutes):
         num_tasks = random.randint(0, max_tasks_per_minute)
         for _ in range(num_tasks):
             await enqueue_job(redis_pool, True)
         
-        if _ < total_minutes - 1:
+        if minute < total_minutes - 1:
             await asyncio.sleep(60)
 
 
