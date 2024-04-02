@@ -76,11 +76,12 @@ async def pattern_random_distribution(redis_pool: ArqRedis, max_tasks_per_minute
 async def main():
     redis_pool = await create_pool(get_redis_settings(), default_queue_name=settings.queue_name)
 
-    await pattern_hill(redis_pool, 20)
-    await pattern_increasing_errors(redis_pool, 20)
-    await pattern_random_distribution(redis_pool, 20)
-    await pattern_peak(redis_pool, 20)
-
+    while True:
+        await pattern_hill(redis_pool, 20)
+        await pattern_random_distribution(redis_pool, 20)
+        await pattern_increasing_errors(redis_pool, 20)
+        await pattern_random_distribution(redis_pool, 20)
+        await pattern_peak(redis_pool, 20)
 
 if __name__ == "__main__":
     asyncio.run(main())
