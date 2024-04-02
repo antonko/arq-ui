@@ -25,7 +25,7 @@ export const TimeLine = observer(() => {
     <HoverCard
       width={280}
       shadow="md"
-      openDelay={200}
+      openDelay={100}
       key={item.date.toString()}
     >
       <HoverCard.Target>

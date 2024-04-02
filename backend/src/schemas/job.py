@@ -83,45 +83,54 @@ class Job(BaseModel):
         description="Unique identifier for the job",
         examples=["f0c9d0944f1b4763b261ab5d49581321"],
     )
+
     status: JobStatus = Field(
         default=JobStatus.not_found,
         description="Status of the job",
         examples=["complete"],
     )
+
     success: bool = Field(
         default=False,
         description="Indicates whether the job was successfully completed",
         examples=[True],
     )
+
     enqueue_time: datetime = Field(
         description="Date and time when the job was enqueued",
         examples=["2024-03-24T17:32:30.587000+00:00"],
     )
+
     result: str | None = Field(
         default=None,
         description="Result string of the job",
         examples=["ok"],
     )
+
     start_time: datetime | None = Field(
         default=None,
         description="Date and time when the job was started",
         examples=["2024-03-24T17:32:30.587000+00:00"],
     )
+
     finish_time: datetime | None = Field(
         default=None,
         description="Date and time when the job was finished",
         examples=["2024-03-24T17:32:30.587000+00:00"],
     )
+
     queue_name: str | None = Field(
         default=None,
         description="Name of the queue in which the job was enqueued",
         examples=["arq:queue"],
     )
-    execution_duration: int | None = Field(
+
+    execution_duration: float | None = Field(
         default=None,
-        description="Duration of the job execution in seconds",
+        description="Duration of the job execution in seconds, including milliseconds",
         examples=[0],
     )
+
     function: str = Field(
         ...,
         description="Name of the function that was executed by the job",
@@ -158,20 +167,26 @@ class JobCreate(BaseModel):
     """Represents a job creation request."""
 
     function: str = Field(..., description="Name of the function to execute")
+
     args: list[Any] = Field(
         default_factory=list,
         description="Positional arguments of the function",
     )
+
     job_id: str | None = Field(None, description="Job identifier")
+
     queue_name: str | None = Field(None, description="Name of the queue")
+
     defer_until: datetime | None = Field(
         None,
         description="Postpone execution until the specified date/time",
     )
+
     expires: timedelta | None = Field(
         None,
         description="Set the expiration time for the job",
     )
+
     kwargs: dict[str, Any] = Field(
         default_factory=dict,
         description="Named arguments of the function",

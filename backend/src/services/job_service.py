@@ -57,7 +57,7 @@ class JobService:
                 "",
             )
 
-            arq_job = ArqJob(key_id_without_prefix, redis)
+            arq_job = ArqJob(key_id_without_prefix, redis, _queue_name=settings.queue_name)
             status = await arq_job.status()
 
             if status == arq.jobs.JobStatus.complete:
@@ -82,7 +82,7 @@ class JobService:
                     start_time=job_result.start_time.replace(tzinfo=ZoneInfo(settings.timezone)),
                     finish_time=job_result.finish_time.replace(tzinfo=ZoneInfo(settings.timezone)),
                     queue_name=job_result.queue_name,
-                    execution_duration=int(
+                    execution_duration=float(
                         (job_result.finish_time - job_result.start_time).total_seconds(),
                     ),
                 )
@@ -121,12 +121,12 @@ class JobService:
         jobs_task = await asyncio.gather(*tasks)
         jobs: list[Job] = [job for job in jobs_task if job is not None]
 
-        twenty_four_hours_ago = datetime.now(UTC) - timedelta(hours=1)
+        one_hour_ago = datetime.now(UTC) - timedelta(hours=1)
         return [
             job
             for job in jobs
-            if job.enqueue_time >= twenty_four_hours_ago
-            or (job.start_time and job.start_time >= twenty_four_hours_ago)
+            if job.enqueue_time >= one_hour_ago
+            or (job.start_time and job.start_time >= one_hour_ago)
         ]
 
     async def get_job_by_id(self, job_id: str) -> Job | None:
@@ -142,7 +142,7 @@ class JobService:
     async def abort_job(self, job_id: str) -> bool:
         """Abort job."""
         redis = await create_pool(self.redis_settings)
-        job: ArqJob = ArqJob(job_id, redis)
+        job: ArqJob = ArqJob(job_id, redis, _queue_name=settings.queue_name)
         return await job.abort()
 
     def adjust_color_intensity(self, color_intensity: float) -> float:
@@ -160,27 +160,30 @@ class JobService:
         """Generate statistics for jobs."""
         # TODO: This function is too complex. It should be refactored.
         max_time_diff = 60
+        now_fixed = datetime.now(UTC).replace(second=0, microsecond=0)
 
-        one_hour_ago = datetime.now(UTC).replace(second=0, microsecond=0) - timedelta(hours=1)
-        current_minute = (datetime.now(UTC) - one_hour_ago).total_seconds() // 60
+        one_hour_ago = now_fixed - timedelta(hours=1) + timedelta(minutes=1)
+        current_minute = (now_fixed - one_hour_ago).total_seconds() // max_time_diff
 
         statistics = [
             JobsTimeStatistics(date=(one_hour_ago + timedelta(minutes=i)))
             for i in range(max_time_diff)
         ]
         for job in jobs_list:
-            created_diff = (job.enqueue_time - one_hour_ago).total_seconds() // 60
+            created_diff = (job.enqueue_time - one_hour_ago).total_seconds() // max_time_diff
             if 0 <= created_diff < max_time_diff:
                 statistics[int(created_diff)].total_created += 1
 
             if job.status == JobStatus.in_progress and job.start_time:
-                start_diff = int((job.start_time - one_hour_ago).total_seconds() // 60)
+                start_diff = int((job.start_time - one_hour_ago).total_seconds() // max_time_diff)
                 for i in range(start_diff, min(int(current_minute) + 1, max_time_diff)):
                     statistics[i].total_in_progress += 1
 
             if job.status == JobStatus.complete and job.start_time and job.finish_time:
-                start_diff = int((job.start_time - one_hour_ago).total_seconds() // 60)
-                finish_diff = int((job.finish_time - one_hour_ago).total_seconds() // 60)
+                start_diff = int((job.start_time - one_hour_ago).total_seconds() // max_time_diff)
+                finish_diff = int(
+                    (job.finish_time - one_hour_ago).total_seconds() // max_time_diff,
+                )
                 for i in range(start_diff, min(finish_diff + 1, max_time_diff)):
                     statistics[i].total_in_progress += 1
                 if finish_diff < max_time_diff:

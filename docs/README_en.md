@@ -2,7 +2,7 @@
 
 This project is a simple interface for monitoring jobs executed using the [arq](https://github.com/samuelcolvin/arq) library.
 
-![arq UI](./docs/screenshot1.png)
+![arq UI](./screenshot1.png)
 
 ## Features
 

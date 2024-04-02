@@ -1,6 +1,10 @@
 {
   "branches": [
-    "main"
+    "main",
+    {
+      "name": "rc",
+      "prerelease": true
+    }
   ],
   "plugins": [
     "@semantic-release/commit-analyzer",
@@ -18,9 +22,20 @@
       }
     ],
     [
-      "@semantic-release-plus/docker",
+      "@codedependant/semantic-release-docker",
       {
-        "name": "antonk0/arq-ui"
+        "dockerTags": [
+          "{{#if prerelease.[0]}}{{prerelease.[0]}}{{else}}latest{{/if}}",
+          "{{major}}-{{#if prerelease.[0]}}{{prerelease.[0]}}{{else}}latest{{/if}}",
+          "{{major}}.{{minor}}-{{#if prerelease.[0]}}{{prerelease.[0]}}{{else}}latest{{/if}}",
+          "{{version}}"
+        ],
+        "dockerImage": "arq-ui",
+        "dockerProject": "antonk0",
+        "dockerPlatform": [
+          "linux/amd64",
+          "linux/arm64"
+        ]
       }
     ]
   ]

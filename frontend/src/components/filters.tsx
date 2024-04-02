@@ -19,12 +19,11 @@ export const Filters = observer(() => {
         <Select
           multiple={false}
           placeholder="Function"
-          data={[...rootStore.functions]}
+          data={rootStore.functions}
           value={rootStore.filterJobs.function}
           onChange={(value) => {
             rootStore.setFilterFunction(value);
           }}
-          clearable
         />
       </Grid.Col>
       <Grid.Col span="auto">

@@ -1,23 +1,19 @@
 import {
   ActionIcon,
-  Button,
   Container,
   Group,
+  Loader,
   useComputedColorScheme,
   useMantineColorScheme,
 } from "@mantine/core";
-import {
-  IconSun,
-  IconMoon,
-  IconTimelineEventPlus,
-  IconReload,
-} from "@tabler/icons-react";
+import { IconSun, IconMoon, IconReload } from "@tabler/icons-react";
 import cx from "clsx";
+import { observer } from "mobx-react-lite";
 
 import { rootStore } from "../stores";
 
 import classes from "./header.module.css";
-function Header() {
+export const Header = observer(() => {
   const { setColorScheme } = useMantineColorScheme();
   const computedColorScheme = useComputedColorScheme("light", {
     getInitialValueInEffect: true,
@@ -27,19 +23,26 @@ function Header() {
       <Container size="xl" className={classes.inner}>
         <h2>arq UI</h2>
         <Group>
-          <Button
+          {/* <Button
             leftSection={<IconTimelineEventPlus size={14} />}
             variant="default"
           >
             Enqueue job
-          </Button>
+          </Button> */}
           <ActionIcon
             variant="default"
             size="lg"
             aria-label="Toggle color scheme"
             onClick={() => rootStore.clearFilter()}
           >
-            <IconReload stroke={1.5} size={20} />
+            {rootStore.isLoading ? (
+              <Loader
+                size="xs"
+                color={computedColorScheme === "dark" ? "white" : "gray"}
+              />
+            ) : (
+              <IconReload stroke={1.5} size={20} />
+            )}
           </ActionIcon>
           <ActionIcon
             onClick={() =>
@@ -56,6 +59,4 @@ function Header() {
       </Container>
     </header>
   );
-}
-
-export default Header;
+});
