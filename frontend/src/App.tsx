@@ -14,7 +14,7 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import { Filters } from "./components/filters";
 import Footer from "./components/footer";
-import Header from "./components/header";
+import { Header } from "./components/header";
 import { Statistics } from "./components/statistics";
 import { TableJobs } from "./components/tablejobs";
 import { TimeLine } from "./components/timeline";
