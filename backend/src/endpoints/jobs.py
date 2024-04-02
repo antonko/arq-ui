@@ -249,14 +249,8 @@ async def get_hourly_statistics() -> list[JobsTimeStatistics]:
 )
 async def create_job(new_job: JobCreate) -> Job:
     """Create job."""
-    job_service = JobService(
-        get_redis_settings(),
-        get_lru_cache(),
-    )
-    job = await job_service.create_job(new_job)
-    if not job:
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to create a job.",
+    logger.info(f"Creating job with function {new_job.function}.")
+    raise HTTPException(
+            status_code=501,
+            detail="Not implemented",
         )
-    return job
